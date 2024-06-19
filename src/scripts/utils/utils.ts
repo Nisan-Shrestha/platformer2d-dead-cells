@@ -29,7 +29,6 @@ export class Rect2D {
   }
 }
 
-
 export class Vect2D {
   x: number;
   y: number;
@@ -48,19 +47,24 @@ export function AABBIntersect(rect1: Rect2D, rect2: Rect2D) {
   );
 }
 
-interface IKeymap {
+export interface IKeymap {
   left: string;
   right: string;
   fire: string;
 }
 
-interface Button {
+export interface Button {
   text: string;
   rect: Rect2D;
   onClick: () => void;
   active: boolean;
 }
-export function renderButton(ctx:CanvasRenderingContext2D,button: Button, color : string = "white", textColor: string = "black") {
+export function renderButton(
+  ctx: CanvasRenderingContext2D,
+  button: Button,
+  color: string = "white",
+  textColor: string = "black"
+) {
   ctx.fillStyle = color;
   ctx.fillRect(
     button.rect.x,
@@ -68,7 +72,7 @@ export function renderButton(ctx:CanvasRenderingContext2D,button: Button, color 
     button.rect.width,
     button.rect.height
   );
-  ctx.fillStyle =textColor;
+  ctx.fillStyle = textColor;
   ctx.font = "20px Arial";
   ctx.fillText(
     button.text,
@@ -79,8 +83,7 @@ export function renderButton(ctx:CanvasRenderingContext2D,button: Button, color 
   );
 }
 
-
-enum ColliderLayer {
+export enum ColliderLayer {
   Player = 1 << 0,
   Enemy = 1 << 1,
   PlayerProjectile = 1 << 3,
@@ -88,12 +91,19 @@ enum ColliderLayer {
   Ground = 1 << 5,
   Consumable = 1 << 6,
 }
-enum ColliderMask{
-  Player = ColliderLayer.Enemy | ColliderLayer.EnemyProjectile | ColliderLayer.Ground | ColliderLayer.Consumable,
-  Enemy = ColliderLayer.Player | ColliderLayer.PlayerProjectile | ColliderLayer.Ground,
+export enum ColliderMask {
+  Player = ColliderLayer.Enemy |
+    ColliderLayer.EnemyProjectile |
+    ColliderLayer.Ground |
+    ColliderLayer.Consumable,
+  Enemy = ColliderLayer.Player |
+    ColliderLayer.PlayerProjectile |
+    ColliderLayer.Ground,
   PlayerProjectile = ColliderLayer.Enemy | ColliderLayer.Ground,
   EnemyProjectile = ColliderLayer.Player | ColliderLayer.Ground,
-  Ground = ColliderLayer.Player | ColliderLayer.Enemy | ColliderLayer.PlayerProjectile | ColliderLayer.EnemyProjectile,
+  Ground = ColliderLayer.Player |
+    ColliderLayer.Enemy |
+    ColliderLayer.PlayerProjectile |
+    ColliderLayer.EnemyProjectile,
   Consumable = ColliderLayer.Player,
 }
-export type { IKeymap, Button, ColliderLayer, ColliderMask };

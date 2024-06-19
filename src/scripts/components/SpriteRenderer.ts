@@ -4,7 +4,9 @@ enum SpriteType {
   sheet = 1,
 }
 export class SpriteRenderer {
-  rect: Rect2D;
+  parent: any;
+  width: number;
+  height: number;
   // imageSrc: string;
   sourceImgElement: HTMLImageElement;
   sprteType: SpriteType = SpriteType.single;
@@ -16,18 +18,22 @@ export class SpriteRenderer {
   posArray: Vect2D[] = [new Vect2D(0, 0)];
   staticOffset: Vect2D = new Vect2D(0, 0);
   constructor(
-    rect: Rect2D,
+    parent: any,
+    width: any,
+    height: any,
     sourceImgElement: HTMLImageElement,
     animated: boolean = false,
     animationLength: number = 1,
     posArray: Vect2D[] = [new Vect2D(0, 0)]
   ) {
-    this.rect = rect;
+    this.parent = parent;
+    this.width = width;
+    this.height = height;
     // this.imageSrc = imageSrc;
     // this.sourceImgElement = new Image();
     this.sourceImgElement = sourceImgElement;
-    this.sourceFrameHeight = rect.height;
-    this.sourceFrameWidth = rect.height;
+    this.sourceFrameHeight = this.height;
+    this.sourceFrameWidth = this.height;
     this.animated = animated;
     this.animationLength = animationLength;
     this.posArray = posArray;
@@ -38,8 +44,8 @@ export class SpriteRenderer {
     this.sourceFrameHeight = size.y;
   }
   setTargetSize(size: Vect2D) {
-    this.rect.width = size.x;
-    this.rect.height = size.y;
+    this.width = size.x;
+    this.height = size.y;
   }
   setStaticSourceOffset(offset: Vect2D) {
     this.staticOffset.x = offset.x;
@@ -60,8 +66,8 @@ export class SpriteRenderer {
       this.sourceFrameHeight,
       targetXpos,
       targetYpos,
-      this.rect.width,
-      this.rect.height
+      this.width,
+      this.height
     );
   }
 
@@ -71,16 +77,16 @@ export class SpriteRenderer {
         ctx,
         this.staticOffset.x,
         this.staticOffset.y,
-        this.rect.x,
-        this.rect.y
+        this.parent.position.x,
+        this.parent.position.y
       );
     else {
       this.drawFrame(
         ctx,
         this.posArray[this.animationProgress * this.posArray.length].x,
         this.posArray[this.animationProgress * this.posArray.length].y,
-        this.rect.x,
-        this.rect.y
+        this.parent.position.x,
+        this.parent.position.y
       );
     }
   }

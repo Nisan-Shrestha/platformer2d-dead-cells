@@ -9,8 +9,9 @@ class Eraser {
   static SRC_Y = 0;
   static SRC_WIDTH = 32;
   static SRC_HEIGHT = 32;
-  rect: Rect2D;
-  collider: RectCollider;
+
+  position: Vect2D;
+  // collider: RectCollider;
   spriteRenderer: SpriteRenderer; // Added sprite renderer property
 
   constructor(
@@ -19,17 +20,20 @@ class Eraser {
     scale: number,
     spriteImage: HTMLImageElement
   ) {
-    this.rect = new Rect2D(
-      x,
-      y,
-      Eraser.WIDTH * scale,
-      Eraser.HEIGHT * scale,
-      "blue",
-      true
-    );
-    this.collider = new RectCollider(this.rect, 1);
+    // this.rect = new Rect2D(
+    //   x,
+    //   y,
+    //   Eraser.WIDTH * scale,
+    //   Eraser.HEIGHT * scale,
+    //   "blue",
+    //   true
+    // );
+    this.position = new Vect2D(x, y);
+    // this.collider = new RectCollider(this.rect, 1);
     this.spriteRenderer = new SpriteRenderer(
-      new Rect2D(x, y, Eraser.WIDTH, Eraser.HEIGHT),
+      this,
+      Eraser.WIDTH,
+      Eraser.HEIGHT,
       spriteImage,
       false,
       1,
@@ -39,12 +43,12 @@ class Eraser {
     // Set sprite renderer properties
   }
 
-  setColliderRect(x: number, y: number, width: number, height: number) {
-    this.collider.rect.x = x;
-    this.collider.rect.y = y;
-    this.collider.rect.width = width;
-    this.collider.rect.height = height;
-  }
+  // setColliderRect(x: number, y: number, width: number, height: number) {
+  //   this.collider.rect.x = x;
+  //   this.collider.rect.y = y;
+  //   this.collider.rect.width = width;
+  //   this.collider.rect.height = height;
+  // }
 
   static itemPreview(
     x: number,

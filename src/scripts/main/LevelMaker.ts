@@ -8,6 +8,7 @@ import Eraser from "../entities/Eraser";
 // }
 import { Rect2D, renderButton } from "../utils/utils";
 import { env } from "process";
+import Player from "../entities/Player";
 interface Button {
   text: string;
   rect: Rect2D;
@@ -15,14 +16,14 @@ interface Button {
   active: boolean;
 }
 
-let prefabArr = [null, Plat1, Plat1];
 export class LevelMaker {
   rowCount = 4;
   columnCount = 4;
   grid: number[][];
-  activePrefab = -1;
-  offsetX = 0;
-  offsetY = 0;
+  activePrefab: number = -1;
+  offsetX: number = 0;
+  offsetY: number = 0;
+  playerPresent: boolean = false;
   //sprites defination
   envSprite: HTMLImageElement = SpriteImages.envSprite;
   eraserSprite: HTMLImageElement = SpriteImages.eraserSprite;
@@ -86,8 +87,6 @@ export class LevelMaker {
     }
   }
 
-
-
   // Function to save localStorage data to a file
   downloadJSON(key: string, filename: string) {
     const json = localStorage.getItem(key);
@@ -109,12 +108,28 @@ export class LevelMaker {
     }
   }
 
-
   DrawPrefabMenu() {
     let itemX = 15;
     let itemY = Constants.REF_HEIGHT - 50;
     Eraser.itemPreview(itemX, itemY, ctx, this.eraserSprite, 1);
-
+    for (
+      let prefabIndex = 1;
+      prefabIndex < Constants.prefabArr.length;
+      prefabIndex++
+    ) {
+      if (!this.isPrefabMenuSetup)
+        this.prefabButtonsToSetup.push({
+          rect: new Rect2D(
+            itemX,
+            itemY,
+            Constants.prefabArrSizes[prefabIndex].w,
+            Constants.prefabArrSizes[prefabIndex].h
+          ),
+          scale: 1,
+          prefab: Constants.prefabArr[prefabIndex],
+          prefabNumber: prefabIndex,
+        });
+    }
     if (!this.isPrefabMenuSetup)
       this.prefabButtonsToSetup.push({
         rect: new Rect2D(itemX, itemY, 32, 32),
@@ -132,7 +147,7 @@ export class LevelMaker {
         prefabNumber: 1,
       });
     itemX += 32 * 2 + 32;
-    Plat1.itemPreview(itemX, itemY, ctx, this.envSprite, 1);
+    Player.itemPreview(itemX, itemY, ctx, this.envSprite, 1);
     if (!this.isPrefabMenuSetup)
       this.prefabButtonsToSetup.push({
         rect: new Rect2D(itemX, itemY, 32 * 2, 32),
@@ -196,7 +211,7 @@ export class LevelMaker {
       text: "MoveLeft",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-        this.offsetX-=1;
+        this.offsetX -= 1;
         this.offsetX = Math.max(0, this.offsetX);
       },
       active: true,
@@ -208,7 +223,7 @@ export class LevelMaker {
       text: "moveRight",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-        this.offsetX+=1;
+        this.offsetX += 1;
         this.offsetX = Math.max(0, this.offsetX);
       },
       active: true,
@@ -220,7 +235,7 @@ export class LevelMaker {
       text: "moveDown",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-        this.offsetY+=1;
+        this.offsetY += 1;
         this.offsetY = Math.max(0, this.offsetY);
       },
       active: true,
@@ -232,7 +247,7 @@ export class LevelMaker {
       text: "moveUp",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-        this.offsetY-=1;
+        this.offsetY -= 1;
         this.offsetY = Math.max(0, this.offsetY);
       },
       active: true,
@@ -244,8 +259,8 @@ export class LevelMaker {
       text: "saveMap",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-       this.serializeGridToFile("activeFile");
-       console.log(JSON.stringify(this.grid));
+        this.serializeGridToFile("activeFile");
+        console.log(JSON.stringify(this.grid));
       },
       active: true,
     };
@@ -256,8 +271,8 @@ export class LevelMaker {
       text: "Download",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-       this.downloadJSON("activeFile", "activeFile.json");
-       console.log(JSON.stringify(this.grid));
+        this.downloadJSON("activeFile", "activeFile.json");
+        console.log(JSON.stringify(this.grid));
       },
       active: true,
     };
@@ -268,9 +283,9 @@ export class LevelMaker {
       text: "ResetMap",
       rect: new Rect2D(itemX, itemY, 110, 32),
       onClick: () => {
-       this.rowCount=5
-       this.columnCount=5
-       this.initializeGrid();
+        this.rowCount = 5;
+        this.columnCount = 5;
+        this.initializeGrid();
       },
       active: true,
     };
@@ -352,7 +367,10 @@ export class LevelMaker {
     ) {
       ctx.beginPath();
       ctx.moveTo(16 + i * 16, startY);
-      ctx.lineTo(16 + i * 16, Math.min(endY, 16 + 16 * (this.rowCount-this.offsetY)));
+      ctx.lineTo(
+        16 + i * 16,
+        Math.min(endY, 16 + 16 * (this.rowCount - this.offsetY))
+      );
       ctx.stroke();
     }
     //draw horizontal lines
@@ -363,7 +381,10 @@ export class LevelMaker {
     ) {
       ctx.beginPath();
       ctx.moveTo(startX, 16 + i * 16);
-      ctx.lineTo(Math.min(endX, 16 + 16 * (this.columnCount-this.offsetX) ), 16 + i * 16);
+      ctx.lineTo(
+        Math.min(endX, 16 + 16 * (this.columnCount - this.offsetX)),
+        16 + i * 16
+      );
       ctx.stroke();
     }
 
@@ -374,11 +395,24 @@ export class LevelMaker {
     // ctx.fillRect(31 * 16 + 16, 31 * 16 + 16, 16, 16);
   }
   populateGrid() {
+    this.playerPresent = false;
     for (let i = 0; i < this.rowCount; i++) {
       for (let j = 0; j < this.columnCount; j++) {
         if (this.grid[i][j] != -1) {
-          const item = prefabArr[this.grid[i][j]];
-          item?.itemPreview((j-this.offsetX) * 16 + 16, (i-this.offsetY) * 16 + 16, ctx, this.envSprite, 0.5);
+          const item = Constants.prefabArr[this.grid[i][j]];
+          if (item == Player && !this.playerPresent) {
+            this.playerPresent = true;
+          } else if (item == Player && this.playerPresent) {
+            this.grid[i][j] = -1;
+            continue;
+          }
+          item?.itemPreview(
+            (j - this.offsetX) * 16 + 16,
+            (i - this.offsetY) * 16 + 16,
+            ctx,
+            this.envSprite,
+            0.5
+          );
         }
       }
     }
@@ -392,27 +426,33 @@ export class LevelMaker {
     const endY = Constants.REF_HEIGHT - 64;
     mouseX = mouseX / Constants.scale;
     mouseY = mouseY / Constants.scale;
-    // if (mouseX < endX && mouseY < endY)
-    //   console.log(
-    //     mouseX / 16,
-    //     mouseY / 16,
-    //     startX / 16,
-    //     startY / 16,
-    //     endX / 16,
-    //     endY / 16
-    //   );
+
     if (
       mouseX >= startX &&
       mouseX <= endX &&
       mouseY >= startY &&
       mouseY <= endY
     ) {
-      const i = Math.floor((mouseX - startX) / cellSize+this.offsetX);
-      const j = Math.floor((mouseY - startY) / cellSize+this.offsetY);
-      if (i < this.columnCount && j < this.rowCount) {
+      const i = Math.floor((mouseX - startX) / cellSize + this.offsetX);
+      const j = Math.floor((mouseY - startY) / cellSize + this.offsetY);
+      if (i > this.columnCount || j > this.rowCount) {
+        return;
+      }
+      if (Constants.prefabArr[this.activePrefab] != Player) {
+        if (this.grid[j][i] === Constants.prefabArr.indexOf(Player)) {
+          this.playerPresent = false;
+        }
         this.grid[j][i] = this.activePrefab;
         ctx.fillStyle = "red";
         ctx.fillRect(i * 16 + 16, j * 16 + 16, 16, 16);
+      } else if (
+        Constants.prefabArr[this.activePrefab] == Player &&
+        !this.playerPresent
+      ) {
+        this.grid[j][i] = this.activePrefab;
+        ctx.fillStyle = "red";
+        ctx.fillRect(i * 16 + 16, j * 16 + 16, 16, 16);
+        this.playerPresent = true;
       }
     }
   }

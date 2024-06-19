@@ -1,7 +1,6 @@
-import { Rect2D } from "../utils/utils";
-
+import { Vect2D } from "../utils/utils";
 export class RigidBody {
-  rect: Rect2D;
+  parent: any;
   vx: number = 0;
   vy: number = 0;
   ax: number = 0;
@@ -10,7 +9,7 @@ export class RigidBody {
   dragY: number = 0;
   gravity: number = 0;
   constructor(
-    rect: Rect2D,
+    parent: any,
     vx: number = 0,
     vy: number = 0,
     ax: number = 0,
@@ -18,7 +17,7 @@ export class RigidBody {
     dragX: number = 0,
     dragY: number = 0
   ) {
-    this.rect = rect;
+    this.parent = parent;
     this.vx = vx;
     this.vy = vy;
     this.ax = ax;
@@ -33,8 +32,8 @@ export class RigidBody {
     this.vx += this.ax * delta;
     this.vy += this.ay * delta;
     this.vy += this.gravity * delta;
-    this.rect.x += this.vx * delta;
-    this.rect.y += this.vy * delta;
+    this.parent.position.x += this.vx * delta;
+    this.parent.position.y += this.vy * delta;
   }
 }
 

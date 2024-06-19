@@ -1,6 +1,7 @@
 import Constants from "../utils/constants";
 import { SpriteImages } from "../utils/ImageRepo";
 import LevelMaker from "./LevelMaker";
+import LevelManager from "./LevelManager";
 //sprites defination
 
 window.onload = () => setupCanvas();
@@ -37,8 +38,12 @@ function setupCanvas() {
       Constants.scale
     );
     canvas.style.background = "grey";
-
   }
-  let levEditor = new LevelMaker();
-  levEditor.loadEditor();
+  let levManager = new LevelManager("moveLevel");
+  // setTimeout(() => {
+  //   levManager.loadLevel("moveLevel", false);
+  // },500);
+
+  // let levEditor = new LevelMaker();
+  // levEditor.loadEditor();
 }
