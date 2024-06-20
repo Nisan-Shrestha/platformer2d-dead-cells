@@ -1,3 +1,4 @@
+import Player from "../entities/Player";
 import { Rect2D, ColliderLayer } from "../utils/utils";
 
 class RectCollider {
@@ -5,16 +6,26 @@ class RectCollider {
   parentObj: any;
   width: number;
   height: number;
+  // this offset used only to position the object
+  offset: boolean = false;
+  offsetX: number = 0;
+  offsetY: number = 0;
   static colliderArray: RectCollider[] = [];
   constructor(
     parent: any,
     width: number,
     height: number,
-    layer: ColliderLayer
+    layer: ColliderLayer,
+    offset: boolean = false,
+    offsetX: number = 0,
+    offsetY: number = 0
   ) {
     this.parentObj = parent;
     this.width = width;
     this.height = height;
+    this.offset = offset;
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
     // this.rect = new Rect2D(this.parentObj.position.x, this.parentObj.position.y, rect.width, rect.height, "red", true);
     this.layer = layer;
     RectCollider.colliderArray.push(this);
@@ -26,36 +37,54 @@ class RectCollider {
   //   return (collider1.layer ) != 0;
   // }
 
-  debugDraw(ctx: CanvasRenderingContext2D) {
+  debugDraw(ctx: CanvasRenderingContext2D, color: string = "black") {
     // this.rect.draw(ctx);
-    ctx.fillStyle = "red";
+    ctx.globalAlpha = .5
+    ctx.fillStyle = color;
     ctx.fillRect(
-      this.parentObj.position.x,
-      this.parentObj.position.y,
+      this.parentObj.position.x +
+        (this.offset ? this.offsetX : 0) +
+        (this.parentObj instanceof Player ? Player.RENDER_OFFSET_X : 0),
+      this.parentObj.position.y +
+        (this.offset ? this.offsetY : 0) +
+        (this.parentObj instanceof Player ? Player.RENDER_OFFSET_X : 0),
       this.width,
       this.height
     );
+    ctx.globalAlpha = 1
+    // ctx.fillRect(100,100,100,100)
+    // if (this.parentObj instanceof Player) {
+    //   console.log(this.width, this.height)
+
+    // }
   }
   //moves colliderA parent position to not collide with colliberB
-  static getAABBDirection(
-    colliderA: RectCollider,
-    colliderB: RectCollider
-  ): string {
-    let aTop = colliderA.parentObj.position.y;
-    let aBottom = colliderA.parentObj.position.y + colliderA.height;
-    let aLeft = colliderA.parentObj.position.x;
-    let aRight = colliderA.parentObj.position.x + colliderA.width;
-
-    let bTop = colliderB.parentObj.position.y;
-    let bBottom = colliderB.parentObj.position.y + colliderB.height;
-    let bLeft = colliderB.parentObj.position.x;
-    let bRight = colliderB.parentObj.position.x + colliderB.width;
+  static getAABBDirection(A: RectCollider, B: RectCollider): string {
+    let aTop = A.parentObj.position.y;
+    let aBottom = A.parentObj.position.y + A.height;
+    let aLeft = A.parentObj.position.x;
+    let aRight = A.parentObj.position.x + A.width;
+    let bTop = B.parentObj.position.y;
+    let bBottom = B.parentObj.position.y + B.height;
+    let bLeft = B.parentObj.position.x;
+    let bRight = B.parentObj.position.x + B.width;
 
     // find overlaps for A
-    let topEdgeOverlap = aTop < bBottom && aTop > bTop;
-    let bottomEdgeOverlap = aBottom > bTop && aBottom < bBottom;
-    let rightEdgeOverlap = aRight > bLeft && aRight < bRight;
-    let leftEdgeOverlap = aLeft < bRight && aLeft > bLeft;
+    let topEdgeOverlap =
+      (aTop < bBottom && aTop > bTop) || (bBottom > aTop && bBottom < aBottom);
+    let bottomEdgeOverlap =
+      (aBottom > bTop && aBottom < bBottom) || (bTop < aBottom && bTop > aTop);
+    let rightEdgeOverlap =
+      (aRight > bLeft && aRight < bRight) || (bLeft < aRight && bLeft > aLeft);
+    let leftEdgeOverlap =
+      (aLeft < bRight && aLeft > bLeft) || (bRight > aLeft && bRight < aRight);
+    // if (bottomEdgeOverlap) {
+    //   console.log(aTop, aBottom, aLeft, aRight);
+    //   console.log(bTop, bBottom, bLeft, bRight);
+    //   console.log(
+    //     `topEdgeOverlap: ${topEdgeOverlap},  bottomEdgeOverlap: ${bottomEdgeOverlap},  leftEdgeOverlap: ${leftEdgeOverlap},  rightEdgeOverlap: ${rightEdgeOverlap},  `
+    //   );
+    // }
 
     let dx = 0;
     let dy = 0;
@@ -66,9 +95,9 @@ class RectCollider {
     if (topEdgeOverlap) dy = Math.abs(bBottom - aTop);
     else if (bottomEdgeOverlap) dy = Math.abs(bTop - aBottom);
 
-    console.log(
-      `topEdgeOverlap: ${topEdgeOverlap},  bottomEdgeOverlap: ${bottomEdgeOverlap},  leftEdgeOverlap: ${leftEdgeOverlap},  rightEdgeOverlap: ${rightEdgeOverlap},  `
-    );
+    // console.log(
+    //   `topEdgeOverlap: ${topEdgeOverlap},  bottomEdgeOverlap: ${bottomEdgeOverlap},  leftEdgeOverlap: ${leftEdgeOverlap},  rightEdgeOverlap: ${rightEdgeOverlap},  `
+    // );
     if (topEdgeOverlap && bottomEdgeOverlap) {
       if (leftEdgeOverlap && !rightEdgeOverlap) {
         // Abstracted to ResolveRight
@@ -98,6 +127,11 @@ class RectCollider {
         return "left";
       }
     }
+    console.log(aTop, aBottom, aLeft, aRight);
+    console.log(bTop, bBottom, bLeft, bRight);
+    console.log(
+      `topEdgeOverlap: ${topEdgeOverlap},  bottomEdgeOverlap: ${bottomEdgeOverlap},  leftEdgeOverlap: ${leftEdgeOverlap},  rightEdgeOverlap: ${rightEdgeOverlap},  `
+    );
     return "none";
   }
 

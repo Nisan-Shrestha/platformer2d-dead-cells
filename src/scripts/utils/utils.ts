@@ -50,7 +50,8 @@ export function AABBIntersect(rect1: Rect2D, rect2: Rect2D) {
 export interface IKeymap {
   left: string;
   right: string;
-  fire: string;
+  jump: string;
+  attackA: string;
 }
 
 export interface Button {
