@@ -4,6 +4,9 @@ import Player from "../entities/Player";
 const Constants = {
   MAX_DELTA: 1000/30,
   PLAYER_MOVE_SPEED_X: 0.1,
+  PLAYER_DRAG_X: 0.1,
+  PLAYER_JUMP_POWER: 1,
+  GRAVITY: 3 / 1000,
   scale: 1,
   REF_WIDTH: 1365,
   REF_HEIGHT: 768,

@@ -17,7 +17,7 @@ class Plat1 extends Platform {
     this.spriteRenderer.setSourceFrameSize(
       new Vect2D(Plat1.SRC_WIDTH, Plat1.SRC_HEIGHT)
     );
-    this.spriteRenderer.setStaticSourceOffset(
+    this.spriteRenderer.setSourceOffset(
       new Vect2D(Plat1.SRC_X, Plat1.SRC_Y)
     );
   }

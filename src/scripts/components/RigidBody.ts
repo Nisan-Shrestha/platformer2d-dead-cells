@@ -32,6 +32,12 @@ export class RigidBody {
     this.vx += this.ax * delta;
     this.vy += this.ay * delta;
     this.vy += this.gravity * delta;
+
+    if (Math.abs(this.vx) < 0.01) this.vx = 0;
+    if (Math.abs(this.vy) < 0.01) this.vy = 0;
+    this.vx = this.vx > 0.255 ? 0.255 : this.vx < -0.255 ? -0.255 : this.vx;
+    // this.vy = this.vy > 0.255 ? 0.255 : this.vy < -0.255 ? -0.255 : this.vy;
+    // console.log(this.vx, this.vy);
     this.parent.position.x += this.vx * delta;
     this.parent.position.y += this.vy * delta;
   }
