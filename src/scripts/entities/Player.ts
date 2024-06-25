@@ -4,7 +4,6 @@ import { SpriteRenderer } from "../components/SpriteRenderer";
 import Bow from "../components/WeaponBase/Bow";
 import Melee from "../components/WeaponBase/Melee";
 import Ranged from "../components/WeaponBase/Ranged";
-import { ctx } from "../main/main";
 import { AnimInfo, IAnimInfo } from "../utils/AnimationInfo";
 import { SpriteImages } from "../utils/ImageRepo";
 import Globals from "../utils/constants";
@@ -19,10 +18,10 @@ import {
 import HealthBar from "../components/HealthBar";
 import LevelManager from "../main/LevelManager";
 // import BroadSword from "../prefabs/Weapons/BroadSword";
+import Sword from "../prefabs/Weapons/Sword";
 import AtkUp from "../prefabs/pickable/AtkUp";
 import SpeedUp from "../prefabs/pickable/SpeedUp";
 import Pickable from "./Pickable";
-import Sword from "../prefabs/Weapons/Sword";
 class Player {
   //max Sprite Width and height
   static WIDTH: number = 34;

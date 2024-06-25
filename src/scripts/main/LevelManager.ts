@@ -1,11 +1,9 @@
 import Globals from "../utils/constants";
-import { SpriteImages } from "./../utils/ImageRepo";
 import { ctx, loadMainMenu, tryLoadMainMenu } from "./main";
 // enum Prefab {
 //   Plat1 = 1,
 // }
 import RectCollider from "../components/RectCollider";
-import SpriteRenderer from "../components/SpriteRenderer";
 import Projectile from "../components/WeaponBase/Projectile";
 import Enemy from "../entities/Enemy";
 import Pickable from "../entities/Pickable";

@@ -3,7 +3,6 @@ import RectCollider from "../components/RectCollider";
 import RigidBody from "../components/RigidBody";
 import SpriteRenderer from "../components/SpriteRenderer";
 import LevelManager from "../main/LevelManager";
-import { ctx } from "../main/main";
 import { IAnimInfo } from "../utils/AnimationInfo";
 import { AABBIntersect, ColliderLayer, Rect2D, Vect2D } from "../utils/utils";
 

@@ -81,7 +81,6 @@ const menuButtons: IMenuButton[] = [
     //Easy Button
     rect: new Rect2D(327, 375, 213, 137),
     onClick: () => {
-      document.removeEventListener("click", setupMenuButtons);
       LevelManager.DamageModFactor = 1;
       LevelManager.DamageModFactor = 1;
       ctx.drawImage(SpriteImages.selected, 441, 381);
@@ -92,7 +91,6 @@ const menuButtons: IMenuButton[] = [
     //Hard Button
     rect: new Rect2D(327, 474, 213, 137),
     onClick: () => {
-      document.removeEventListener("click", setupMenuButtons);
       LevelManager.DamageModFactor = 0.7;
       LevelManager.DamageModFactor = 1.5;
       ctx.drawImage(SpriteImages.selected, 441, 473);
@@ -176,7 +174,7 @@ function setupMenuButtons(e: MouseEvent) {
       mouseY > btn.rect.y &&
       mouseY < btn.rect.y + btn.rect.height
     ) {
-      document.removeEventListener("click", setupMenuButtons);
+      // document.removeEventListener("click", setupMenuButtons);
       btn.onClick();
     }
   });
