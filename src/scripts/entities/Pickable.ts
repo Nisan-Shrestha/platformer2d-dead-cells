@@ -56,7 +56,7 @@ export default class Pickable {
       maxWidth / 2 +
       this.spriteRenderer.width / 2 -
       3;
-    console.log(lines);
+    // console.log(lines);
     let py = this.position.y - LevelManager.cameraOffsetY - 16 - rectHeight;
     // Draw border
     ctx.globalAlpha = 1;

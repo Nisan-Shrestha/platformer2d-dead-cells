@@ -121,7 +121,7 @@ function setupCanvas() {
   if (canvas.parentElement) {
     canvas.width = canvas.parentElement.offsetWidth;
     canvas.height = canvas.parentElement.offsetHeight;
-    console.log(canvas.width, canvas.height, Globals.scale);
+    // console.log(canvas.width, canvas.height, Globals.scale);
     if (canvas.width / canvas.height < Globals.REF_WIDTH / Globals.REF_HEIGHT) {
       canvas.height = canvas.width * (Globals.REF_HEIGHT / Globals.REF_WIDTH);
     } else {
@@ -131,18 +131,18 @@ function setupCanvas() {
     Globals.scale = canvas.width / Globals.REF_WIDTH;
     ctx.scale(Globals.scale, Globals.scale);
 
-    console.log(
-      canvas.width / Globals.scale,
-      canvas.height / Globals.scale,
-      Globals.scale
-    );
+    // console.log(
+    //   canvas.width / Globals.scale,
+    //   canvas.height / Globals.scale,
+    //   Globals.scale
+    // );
     canvas.style.background = "grey";
   }
 }
 
 function loadMainMenu() {
-  console.log("Loading Main Menu");
-  console.log("Loading Main Menu:::  ", GameState.menu);
+  // console.log("Loading Main Menu");
+  // console.log("Loading Main Menu:::  ", GameState.menu);
 
   levelMaker = new LevelMaker();
   levelManager = new LevelManager();
@@ -189,7 +189,7 @@ function removeKey(e: KeyboardEvent) {
   Globals.keysPressed.delete(e.key.toLowerCase());
 }
 function addClicked(e: MouseEvent) {
-  console.log(`Pressed ${e.button}`);
+  // console.log(`Pressed ${e.button}`);
   Globals.keysPressed.add(
     e.button === 0 ? "leftM" : e.button === 2 ? "rightM" : "someM"
   );

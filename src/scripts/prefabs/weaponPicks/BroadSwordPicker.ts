@@ -27,8 +27,7 @@ export default class BroadSwordPicker extends Pickable {
   }
 
   onPickUp() {
-    let newPickableName = LevelManager.player!.meleeWeapon.constructor
-      .name as keyof typeof Globals.weaponPickerMap;
+    let newPickableName = LevelManager.player!.meleeWeapon.name as keyof typeof Globals.weaponPickerMap;
     const pickerType = Globals.weaponPickerMap[newPickableName];
     new pickerType(this.position);
     LevelManager.player!.meleeWeapon = new BroadSword(LevelManager.player!);

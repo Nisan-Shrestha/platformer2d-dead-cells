@@ -18,10 +18,11 @@ import {
 // import Health from "../components/HealthBar";
 import HealthBar from "../components/HealthBar";
 import LevelManager from "../main/LevelManager";
-import BroadSword from "../prefabs/Weapons/BroadSword";
+// import BroadSword from "../prefabs/Weapons/BroadSword";
 import AtkUp from "../prefabs/pickable/AtkUp";
 import SpeedUp from "../prefabs/pickable/SpeedUp";
 import Pickable from "./Pickable";
+import Sword from "../prefabs/Weapons/Sword";
 class Player {
   //max Sprite Width and height
   static WIDTH: number = 34;
@@ -53,7 +54,7 @@ class Player {
   isPoisoned: boolean = false;
   disablePoisonTimeoutRef: NodeJS.Timeout | null = null;
   //Inventory
-  meleeWeapon: Melee = new BroadSword(this);
+  meleeWeapon: Melee = new Sword(this);
   rangedWeapon: Ranged = new Bow(this, 0);
 
   //Modifiers
@@ -125,7 +126,7 @@ class Player {
     // console.log(this.keysPressed);
     if (
       this.keymap.interact &&
-      this.currentAnim == AnimInfo.playerIdle &&
+      !(this.isAttackingMelee||this.isAttackingRanged) &&
       this.isKeyPressed(this.keymap.interact) &&
       this.closestPickable != null
     ) {
@@ -387,7 +388,7 @@ class Player {
     if (this.isAttackingMelee) {
       this.meleeWeapon.checkAttack();
       if (this.spriteRenderer.isAnimComplete()) {
-        console.log("reset attack");
+        // console.log("reset attack");
         this.spriteRenderer.setRenderOffset(
           new Vect2D(Player.RENDER_OFFSET_X, Player.RENDER_OFFSET_Y)
         );
@@ -534,10 +535,12 @@ class Player {
       32 * 10 + 32,
       16 + 28
     );
-    let meleeName = this.meleeWeapon.constructor
+
+    let meleeName = this.meleeWeapon
       .name as keyof typeof Globals.weaponPickerMap;
     const meleeType = Globals.weaponPickerMap[meleeName];
     meleeType.itemPreview(16, 32 * 2, ctx, meleeType.defaultSprite, 1.5);
+
     // let arrowName = this.meleeWeapon.constructor
     //   .name as keyof typeof Globals.weaponPickerMap;
     // const arrowType = Globals.weaponPickerMap[meleeName];

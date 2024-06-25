@@ -43,14 +43,14 @@ const mapButtonConfigs: {
     text: "Save Map",
     onClick: (thisRef) => {
       thisRef.serializeGridToFile("customLevel");
-      console.log(JSON.stringify(thisRef.grid));
+      // console.log(JSON.stringify(thisRef.grid));
     },
   },
   {
     text: "Download",
     onClick: (thisRef) => {
       thisRef.downloadJSON("customLevel", "customLevel.json");
-      console.log(JSON.stringify(thisRef.grid));
+      // console.log(JSON.stringify(thisRef.grid));
     },
   },
   {
@@ -65,7 +65,7 @@ const mapButtonConfigs: {
     text: "Play",
     onClick: (context) => {
       context.serializeGridToFile("customLevel");
-      console.log("Map saved locally");
+      // console.log("Map saved locally");
       new LevelManager().loadLevel("", true);
     },
   },
@@ -179,7 +179,7 @@ export class LevelMaker {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } else {
-      console.log(`No data found in localStorage for key: ${key}`);
+      // console.log(`No data found in localStorage for key: ${key}`);
     }
   }
 
@@ -204,7 +204,7 @@ export class LevelMaker {
         rect: new Rect2D(itemX, itemY, config.width, config.height),
         onClick: () => {
           this.activePrefab = config.prefabNumber;
-          console.log("Update active Prefab:", this.activePrefab);
+          // console.log("Update active Prefab:", this.activePrefab);
         },
         active: true,
         prefab: config.prefab,
@@ -288,7 +288,7 @@ export class LevelMaker {
 
   loadEditor() {
     LevelManager.gameState = GameState.editor;
-    console.log("loading editor");
+    // console.log("loading editor");
     this.grid = [];
     this.initializeGrid();
     this.loadGridFromJsonFile("customLevel");
@@ -320,7 +320,7 @@ export class LevelMaker {
   };
 
   setupGridPlacerOnClick = (event: MouseEvent) => {
-    console.log("current button:", event.button);
+    // console.log("current button:", event.button);
     if (event.button === 0) {
       const mouseX = event.offsetX;
       const mouseY = event.offsetY;
@@ -370,7 +370,7 @@ export class LevelMaker {
     // Draw horizontal lines
     for (let i = 0; i <= rowCount && startY + cellSize * i < endY; i++) {
       ctx.moveTo(startX, startY + cellSize * i);
-      console.log(endX, startX + cellSize * columnCount);
+      // console.log(endX, startX + cellSize * columnCount);
       ctx.lineTo(
         Math.min(endX, startX + cellSize * columnCount),
         startY + cellSize * i

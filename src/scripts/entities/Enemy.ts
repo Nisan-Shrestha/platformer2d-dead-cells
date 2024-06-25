@@ -292,16 +292,16 @@ export default class Enemy {
     }
     setTimeout(() => {
       const enemyIndex = LevelManager.activeEnemyArr.indexOf(this);
-      console.log(
-        "enemyIndex",
-        enemyIndex,
-        this.name,
-        LevelManager.activeEnemyArr
-      );
+      // console.log(
+      //   "enemyIndex",
+      //   enemyIndex,
+      //   this.name,
+      //   LevelManager.activeEnemyArr
+      // );
       if (enemyIndex !== -1) {
         LevelManager.activeEnemyArr.splice(enemyIndex, 1);
       }
-      console.log("enemyIndex", this.name, LevelManager.activeEnemyArr);
+      // console.log("enemyIndex", this.name, LevelManager.activeEnemyArr);
     }, 1000);
     // Remove object reference from LevelManager's activeEnemyArr
   }

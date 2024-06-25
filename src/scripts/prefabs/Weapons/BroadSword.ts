@@ -18,7 +18,7 @@ export default class BroadSword extends Melee {
   static MAP_HEIGHT: number = 24;
   constructor(parent: Player) {
     super(
-      "sword",
+      "broadSword",
       45,
       BroadSword.icon,
       BroadSword.animInfo,
@@ -65,7 +65,7 @@ export default class BroadSword extends Melee {
         );
 
         if (a) {
-          console.log("enemy hurt");
+          // console.log("enemy hurt");
           enemyCollider.parentObj.getHurt(this.damage);
         }
       });

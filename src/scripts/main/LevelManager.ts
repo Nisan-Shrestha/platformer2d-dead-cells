@@ -63,21 +63,17 @@ export class LevelManager {
         this.rowCount = data.length;
         this.columnCount = data[0].length;
         this.grid = data;
-
         this.levelLoadPending = false;
         // console.log(this.grid)
-      })
-      .catch((error) => {
-        console.log(`Error loading grid from ${filename}.json: ${error}`);
       });
   }
 
   loadLevel(
     levelName: string = "",
-    loadLocal: boolean = false,
+    loadLocal: boolean = false
     // survival: boolean = false
   ) {
-    console.log("loading level: ", levelName);
+    // console.log("loading level: ", levelName);
     // Reset map info
     this.rowCount = 0;
     this.columnCount = 0;
@@ -98,7 +94,7 @@ export class LevelManager {
     // });
     document.addEventListener("keydown", (event) => {
       if (event.key === "q") {
-        console.log("This is happening");
+        // console.log("This is happening");
       }
     });
     document.removeEventListener("keydown", tryLoadMainMenu);
@@ -146,7 +142,7 @@ export class LevelManager {
     // console.log(LevelManager.gameState);
     if (LevelManager.gameState == GameState.menu) return;
     if (LevelManager.gameState == GameState.lost) {
-      ctx.textAlign = "center"
+      ctx.textAlign = "center";
       ctx.font = "32px monospace";
       ctx.fillText(
         "You Lost!",
@@ -162,16 +158,24 @@ export class LevelManager {
         () => tryLoadMainMenu(new KeyboardEvent("keydown", { key: "Escape" })),
         2000
       );
-      console.log("game over");
+      // console.log("game over");
       // show scroe goto main menu fn
       return;
     }
     if (LevelManager.gameState == GameState.won) {
-      ctx.textAlign = "center"
+      ctx.textAlign = "center";
       ctx.font = "32px monospace";
-      console.log("Won level Going to next");
-      ctx.fillText("You Win!",  Globals.REF_WIDTH/2,Globals.REF_HEIGHT/2-64);
-      ctx.fillText(`Your Score: ${LevelManager.Score}`,  Globals.REF_WIDTH/2,Globals.REF_HEIGHT/2-24);
+      // console.log("Won level Going to next");
+      ctx.fillText(
+        "You Win!",
+        Globals.REF_WIDTH / 2,
+        Globals.REF_HEIGHT / 2 - 64
+      );
+      ctx.fillText(
+        `Your Score: ${LevelManager.Score}`,
+        Globals.REF_WIDTH / 2,
+        Globals.REF_HEIGHT / 2 - 24
+      );
       // show scroe goto next Level
       return;
     }

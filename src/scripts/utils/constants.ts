@@ -19,8 +19,13 @@ import Eraser from "../entities/Eraser";
 import HealthUp from "../prefabs/pickable/HealthUp";
 import SpeedUp from "../prefabs/pickable/SpeedUp";
 import AtkUp from "../prefabs/pickable/AtkUp";
-
+// let level1 = import("../../levels/Level1.json");
+// let level2 = import("../../levels/Level2.json");
+// let level3 = import("../../levels/Level3.json");
+// let survival = import("../../levels/Survival.json");
+// export const;
 const Globals = {
+  // Levels : [level1, level2, level3, survival],
   keysPressed: new Set<string>(),
   MAX_DELTA: 1000 / 30,
   PLAYER_MOVE_SPEED_X: 0.125,
@@ -55,8 +60,8 @@ const Globals = {
   enemyDropArr: [HealthPotion, HealthUp, SpeedUp, AtkUp],
   playerProjectileArr: [NormalArrow],
   weaponPickerMap: {
-    Sword: SwordPicker,
-    BroadSword: BroadSwordPicker,
+    sword: SwordPicker,
+    broadSword: BroadSwordPicker,
   },
 };
 
