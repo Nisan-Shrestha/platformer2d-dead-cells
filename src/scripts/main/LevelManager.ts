@@ -74,7 +74,7 @@ export class LevelManager {
   ) {
     if (survivalMode) {
       this.survivalMode = survivalMode;
-      this.maxEnemies = 7;
+      this.maxEnemies = 8;
     }
     // console.log("loading level: ", levelName);
     // Reset map info
@@ -193,6 +193,7 @@ export class LevelManager {
     }
 
     if (this.survivalMode) {
+      this.maxEnemies = 8 + Math.floor(LevelManager.Score / 50);
       if (LevelManager.activeEnemyArr.length < this.maxEnemies) {
         let posIndex =
           Globals.enemiesSpawnIndex[
@@ -286,7 +287,14 @@ export class LevelManager {
     if (LevelManager.player!.healthBar.value <= 0) {
       LevelManager.gameState = GameState.lost;
     }
-
+    // canvas.style.backgroundSize = "3840px 2160px";
+    let xpos =
+      -LevelManager.cameraOffsetX /
+      ((this.columnCount * 32) / Globals.REF_WIDTH);
+    let ypos =
+      -LevelManager.cameraOffsetY / ((this.rowCount * 32) / Globals.REF_HEIGHT);
+    console.log("LevelManager.cameraO:", LevelManager.cameraOffsetX, xpos);
+    ctx.canvas.style.backgroundPosition = `${xpos}px ${ypos}px`;
     requestAnimationFrame(() => this.Update());
   }
 
@@ -308,7 +316,7 @@ export class LevelManager {
         (LevelManager.player!.position.x -
           LevelManager.cameraOffsetX +
           (Globals.REF_WIDTH * 1) / 4) *
-        0.0005;
+        0.001;
     }
     if (
       LevelManager.player!.position.y >

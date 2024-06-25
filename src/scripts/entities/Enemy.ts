@@ -4,6 +4,7 @@ import RigidBody from "../components/RigidBody";
 import SpriteRenderer from "../components/SpriteRenderer";
 import LevelManager from "../main/LevelManager";
 import { IAnimInfo } from "../utils/AnimationInfo";
+import Globals from "../utils/constants";
 import { AABBIntersect, ColliderLayer, Rect2D, Vect2D } from "../utils/utils";
 
 export default class Enemy {
@@ -280,6 +281,13 @@ export default class Enemy {
   die() {
     if (this.Dead) {
       return;
+    }
+    if (Math.random() > 0.8) {
+      let pickupType =
+        Globals.enemyDropArr[
+          Math.floor(Math.random() * Globals.enemyDropArr.length)
+        ];
+      new pickupType(this.position);
     }
     LevelManager.Score += this.ScoreAmt;
     this.Dead = true;

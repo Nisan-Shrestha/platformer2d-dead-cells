@@ -11,6 +11,7 @@ const envSprite = getImage("/Sprites/env/villageTileSet.png");
 const woodenPlatform = getImage("/Sprites/env/oneWay.png");
 const spike = getImage("/Sprites/env/spike.png");
 const toxicWater = getImage("/Sprites/env/toxicWaterSheet.png");
+const background = getImage("/Sprites/env/background.jpg");
 // levelMaker
 const eraserSprite = getImage("/Sprites/menu/eraser.png");
 
@@ -48,6 +49,7 @@ const comboterWalk = getImage("Sprites/enemies/comboter/comboterWalk.png");
 const comboterIdle = getImage("Sprites/enemies/comboter/comboterIdle.png");
 const comboterAtk = getImage("Sprites/enemies/comboter/comboterAtk.png");
 
+
 export const SpriteImages: { [key: string]: HTMLImageElement } = {
   menuBG,
   selected,
@@ -82,4 +84,5 @@ export const SpriteImages: { [key: string]: HTMLImageElement } = {
   comboterWalk,
   comboterIdle,
   comboterAtk,
+  background
 };

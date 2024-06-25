@@ -134,7 +134,10 @@ function setupCanvas() {
     //   canvas.height / Globals.scale,
     //   Globals.scale
     // );
-    canvas.style.background = "grey";
+    // canvas.style.background = "grey";
+    canvas.style.backgroundImage = `url(${SpriteImages.background.src})`;
+    canvas.style.backgroundSize = "3840px 2160px";
+    canvas.style.backgroundPosition= "0px 0px";
   }
 }
 
