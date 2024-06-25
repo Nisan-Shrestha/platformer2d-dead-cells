@@ -191,22 +191,19 @@ export class LevelManager {
       // show scroe goto next Level
       return;
     }
-
     if (this.survivalMode) {
       this.maxEnemies = 8 + Math.floor(LevelManager.Score / 50);
       if (LevelManager.activeEnemyArr.length < this.maxEnemies) {
         let posIndex =
-          Globals.enemiesSpawnIndex[
-            Math.floor(Math.random() * Globals.enemiesSpawnIndex.length)
-          ];
+        Globals.enemiesSpawnIndex[
+          Math.floor(Math.random() * Globals.enemiesSpawnIndex.length)
+        ];
         let enemyType =
-          Globals.enemiesArr[
-            Math.floor(Math.random() * Globals.enemiesArr.length)
-          ];
-        let enemy = new enemyType(
-          new Vect2D(posIndex[0] * 32, posIndex[1] * 32)
-        );
-        LevelManager.activeEnemyArr.push(enemy);
+        Globals.enemiesArr[
+          Math.floor(Math.random() * Globals.enemiesArr.length)
+        ];
+
+        new enemyType(new Vect2D(posIndex[0] * 32, posIndex[1] * 32))
       }
     }
 
@@ -215,8 +212,8 @@ export class LevelManager {
     let frameTime = Date.now() - this.timeStamp;
     this.timeStamp = Date.now();
     // Ensure Physics calculations are deterministic and collision check happens every MAX_DELTA
+    // console.log("frameTime: ", frameTime);
     while (frameTime > 0) {
-      // console.log("delta");
       // Update remaining time for calc this frame
       let deltaTime = Math.min(frameTime, Globals.MAX_DELTA);
       frameTime -= Globals.MAX_DELTA;
@@ -293,7 +290,7 @@ export class LevelManager {
       ((this.columnCount * 32) / Globals.REF_WIDTH);
     let ypos =
       -LevelManager.cameraOffsetY / ((this.rowCount * 32) / Globals.REF_HEIGHT);
-    console.log("LevelManager.cameraO:", LevelManager.cameraOffsetX, xpos);
+    // console.log("LevelManager.cameraO:", LevelManager.cameraOffsetX, xpos);
     ctx.canvas.style.backgroundPosition = `${xpos}px ${ypos}px`;
     requestAnimationFrame(() => this.Update());
   }
@@ -379,6 +376,10 @@ export class LevelManager {
     }
     // this.setupControls();
     this.timeStamp = Date.now();
+    if (this.survivalMode) {
+      LevelManager.activeEnemyArr = [];
+    }
+    // LevelManager.activeEnemyArr=[]
     this.Update();
   }
 }
