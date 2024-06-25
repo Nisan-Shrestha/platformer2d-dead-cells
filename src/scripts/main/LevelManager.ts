@@ -1,6 +1,6 @@
 import Globals from "../utils/constants";
 import { SpriteImages } from "./../utils/ImageRepo";
-import { ctx, tryLoadMainMenu } from "./main";
+import { ctx, loadMainMenu, tryLoadMainMenu } from "./main";
 // enum Prefab {
 //   Plat1 = 1,
 // }
@@ -26,13 +26,14 @@ export class LevelManager {
   static activeEnemyArr: Enemy[] = [];
   static envElementArr: any = [];
   // Map Info
+  currentLevel: string = "";
   rowCount: number = 0;
   columnCount: number = 0;
   grid: number[][];
 
-  // gameObjects Arrays
-
-  envSprite: HTMLImageElement = SpriteImages.envSprite;
+  //Survival mode counters
+  maxEnemies: number = 8;
+  survivalMode: boolean = false;
 
   // Level States
   timeStamp: number = Date.now();
@@ -70,14 +71,19 @@ export class LevelManager {
 
   loadLevel(
     levelName: string = "",
-    loadLocal: boolean = false
-    // survival: boolean = false
+    loadLocal: boolean = false,
+    survivalMode: boolean = false
   ) {
+    if (survivalMode) {
+      this.survivalMode = survivalMode;
+      this.maxEnemies = 7;
+    }
     // console.log("loading level: ", levelName);
     // Reset map info
     this.rowCount = 0;
     this.columnCount = 0;
     this.grid = [];
+    this.currentLevel = levelName;
     LevelManager.cameraOffsetX = 32;
     LevelManager.cameraOffsetY = 16;
 
@@ -118,7 +124,7 @@ export class LevelManager {
     Projectile.allProjectiles = [];
     Pickable.AllPickables = [];
     Trap.AllTraps = [];
-    this.envSprite = SpriteImages.envSprite;
+
     Globals.keysPressed = new Set<string>();
     this.timeStamp = Date.now();
     this.levelLoadPending = true;
@@ -154,10 +160,7 @@ export class LevelManager {
         Globals.REF_WIDTH / 2,
         Globals.REF_HEIGHT / 2 - 24
       );
-      setTimeout(
-        () => tryLoadMainMenu(new KeyboardEvent("keydown", { key: "Escape" })),
-        2000
-      );
+      setTimeout(() => loadMainMenu(), 2000);
       // console.log("game over");
       // show scroe goto main menu fn
       return;
@@ -167,7 +170,7 @@ export class LevelManager {
       ctx.font = "32px monospace";
       // console.log("Won level Going to next");
       ctx.fillText(
-        "You Win!",
+        `Cleared Level: ${this.currentLevel}!, Loading Next Screen`,
         Globals.REF_WIDTH / 2,
         Globals.REF_HEIGHT / 2 - 64
       );
@@ -176,8 +179,36 @@ export class LevelManager {
         Globals.REF_WIDTH / 2,
         Globals.REF_HEIGHT / 2 - 24
       );
+      if (this.currentLevel == "Level1") {
+        setTimeout(() => {
+          this.loadLevel("Level2");
+        }, 2000);
+      } else if (this.currentLevel == "Level2") {
+        setTimeout(() => {
+          this.loadLevel("Level3");
+        }, 2000);
+      } else {
+        setTimeout(() => loadMainMenu(), 2000);
+      }
       // show scroe goto next Level
       return;
+    }
+
+    if (this.survivalMode) {
+      if (LevelManager.activeEnemyArr.length < this.maxEnemies) {
+        let posIndex =
+          Globals.enemiesSpawnIndex[
+            Math.floor(Math.random() * Globals.enemiesSpawnIndex.length)
+          ];
+        let enemyType =
+          Globals.enemiesArr[
+            Math.floor(Math.random() * Globals.enemiesArr.length)
+          ];
+        let enemy = new enemyType(
+          new Vect2D(posIndex[0] * 32, posIndex[1] * 32)
+        );
+        LevelManager.activeEnemyArr.push(enemy);
+      }
     }
 
     ctx.clearRect(0, 0, Globals.REF_WIDTH, Globals.REF_HEIGHT);
@@ -203,7 +234,6 @@ export class LevelManager {
       });
       let dist = 5000;
       LevelManager.player!.closestPickable = null;
-      // console.log("welp", Pickable.AllPickables.length, Pickable.AllPickables);
       let PlayerRect = new Rect2D(
         LevelManager.player!.position.x,
         LevelManager.player!.position.y,
@@ -211,25 +241,11 @@ export class LevelManager {
         LevelManager.player!.collider.height
       );
       Pickable.AllPickables.forEach((pickable) => {
-        // ctx.fillRect(0, 0, 100, 100);
-        SpriteRenderer.drawOffsetRect(
-          ctx,
-          pickable.position.x -
-            pickable.RangeSize.x / 2 +
-            pickable.spriteRenderer.width / 2,
-          pickable.position.y -
-            pickable.RangeSize.y / 2 +
-            pickable.spriteRenderer.height / 2,
-          pickable.RangeSize.x,
-          pickable.RangeSize.y
-        );
         let thisDist = Math.hypot(
           pickable.position.x - LevelManager.player!.position.x,
           pickable.position.y - LevelManager.player!.position.y
         );
 
-        // console.log(thisDist, LevelManager.player!.closestPickable);
-        // console.log("inside");
         if (
           thisDist <= dist &&
           AABBIntersect(
@@ -246,7 +262,6 @@ export class LevelManager {
           LevelManager.player!.closestPickable = pickable;
         }
       });
-      // Projectile.checkPlayerProjectileEffect();
       Trap.AllTraps.forEach((trap) => {
         let tRect = new Rect2D(
           trap.position.x,
@@ -254,15 +269,7 @@ export class LevelManager {
           trap.collider.width,
           trap.collider.height
         );
-        // SpriteRenderer.drawOffsetRect(
-        //   ctx,
-        //   trap.position.x + trap.spriteRenderer.spriteRenderingOffset.x,
-        //   trap.position.y + trap.spriteRenderer.spriteRenderingOffset.y,
-        //   trap.collider.width,
-        //   trap.collider.height,
-        //   "yellow",
-        //   0.5
-        // );
+
         if (AABBIntersect(tRect, PlayerRect)) {
           trap.OnHit();
         } else {
@@ -286,13 +293,6 @@ export class LevelManager {
   }
 
   handleCameraPan() {
-    // !TODO: Make camera pan smoother by accouting for distance from target and player
-    // console.log(
-    //   "offset:",
-    //   LevelManager.cameraOffsetX,
-    //   "position:",
-    //   LevelManager.player!.position.x
-    // );
     if (
       LevelManager.player!.position.x >
       LevelManager.cameraOffsetX + (Globals.REF_WIDTH * 3) / 4
@@ -331,11 +331,8 @@ export class LevelManager {
     LevelManager.envElementArr.forEach((obj: any) => {
       obj.render(ctx);
     });
-    // console.log(Globals.keysPressed)
-    // console.log(LevelManager.activeEnemyArr);
     LevelManager.activeEnemyArr.forEach((enemy: Enemy) => {
       enemy.render(ctx);
-      // enemy.debugDrawHitbox();
     });
     Projectile.allProjectiles.forEach((projectile) => {
       projectile.render(ctx);
@@ -344,31 +341,13 @@ export class LevelManager {
     Pickable.AllPickables.forEach((pickable) => {
       pickable.render(ctx);
     });
-    Trap.AllTraps.forEach((trap) => {
-      trap.render(ctx);
-    });
-
-    // let p = new Pickable(
-    //   "test",
-    //   "This is a test description that is surely mulitple lines long.",
-    //   LevelManager.player!.position,
-    //   new Vect2D(32, 32),
-    //   SpriteImages.envSprite
-    // );
     if (LevelManager.player!.closestPickable != null) {
       LevelManager.player!.closestPickable.renderDescription(ctx);
     }
-
-    // // Player Buffs
-    // if (LevelManager.player!.damageMult != 1) {
-    // }
-    // // Player Buffs
-    // if (LevelManager.player!.speedMult != 1) {
-    // }
-    // Player Buffs
     LevelManager.player?.render(ctx);
-
-    // p.renderDescription(ctx)
+    Trap.AllTraps.forEach((trap) => {
+      trap.render(ctx);
+    });
   }
 
   populateUsingGrid() {
@@ -381,26 +360,14 @@ export class LevelManager {
             a = new item(new Vect2D(j * 32, i * 32));
             if (a instanceof Player) {
               LevelManager.player = a;
+              LevelManager.player.position = new Vect2D(j * 32, i * 32);
               continue;
             }
-            // LevelManager.envElementArr.push(a);
           }
         }
       }
     }
-    // let a = new Archer(new Vect2D(400, 64));
-    // LevelManager.activeEnemyArr.push(a);
-    // let b = new Worm(new Vect2D(400, 64));
-    // LevelManager.activeEnemyArr.push(b);
-    // let c = new Comboter(new Vect2D(500, 64));
-    // LevelManager.activeEnemyArr.push(c);
-    // let d = new HealthPotion(new Vect2D(120, 8 * 32));
-    // let e = new HealthPotion(new Vect2D(220, 8 * 32));
-    // let f = new Spike(new Vect2D(6 * 32, 9 * 32));
-    // let g = new Spike(new Vect2D(7 * 32, 9 * 32));
-    // let h = new ToxicWater(new Vect2D(4 * 32, 9 * 32));
-    // let i = new ToxicWater(new Vect2D(5 * 32, 9 * 32));
-    // let j = new SwordPicker(new Vect2D(3 * 32, 9 * 32));
+
     if (LevelManager.player == null) {
       LevelManager.player = new Player(new Vect2D(32 * 3, 32 * 3));
     }
@@ -408,17 +375,6 @@ export class LevelManager {
     this.timeStamp = Date.now();
     this.Update();
   }
-
-  // addKey(e: KeyboardEvent) {
-  //   this.keysPressed.add(e.key);
-  // }
-  // removeKey(e: KeyboardEvent) {
-  //   this.keysPressed.delete(e.key);
-  // }
-  // setupControls() {
-  //   window.addEventListener("keydown", (e) => this.addKey(e));
-  //   window.addEventListener("keyup", (e) => this.removeKey(e));
-  // }
 }
 
 export default LevelManager;

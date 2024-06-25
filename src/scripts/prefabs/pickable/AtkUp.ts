@@ -25,7 +25,7 @@ export default class AtkUp extends Pickable {
   }
 
   onPickUp() {
-    LevelManager.player!.increaseDamageMult(AtkUp.increaseAmt);
+  LevelManager.player!.increaseDamageMult(AtkUp.increaseAmt);
     this.delete();
   }
 
@@ -36,8 +36,6 @@ export default class AtkUp extends Pickable {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, AtkUp.WIDTH * scale, AtkUp.HEIGHT * scale);
     ctx.drawImage(
       Image,
       AtkUp.SRC_X,

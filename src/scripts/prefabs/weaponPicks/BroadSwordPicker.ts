@@ -41,13 +41,6 @@ export default class BroadSwordPicker extends Pickable {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(
-      x,
-      y,
-      BroadSwordPicker.WIDTH * scale,
-      BroadSwordPicker.HEIGHT * scale
-    );
     ctx.drawImage(
       Image,
       // BroadSwordPicker.defaultSprite,

@@ -20,8 +20,7 @@ class Eraser {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Eraser.WIDTH * scale, Eraser.HEIGHT * scale);
+    
     ctx.drawImage(
       Image,
       Eraser.SRC_X,

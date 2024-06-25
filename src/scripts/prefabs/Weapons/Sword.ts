@@ -39,8 +39,6 @@ export default class Sword extends Melee {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Sword.MAP_WIDTH * scale, Sword.MAP_HEIGHT * scale);
     ctx.drawImage(
       Image,
       0,

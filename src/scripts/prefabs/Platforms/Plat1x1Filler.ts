@@ -16,7 +16,7 @@ export default class Plat1x1Filler extends Platform {
     super(
       position.x,
       position.y,
-      Plat1x1Filler.WIDTH,
+      Plat1x1Filler.WIDTH+1,
       Plat1x1Filler.HEIGHT,
       SpriteImages.envSprite
     );
@@ -39,13 +39,6 @@ export default class Plat1x1Filler extends Platform {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(
-      x,
-      y,
-      Plat1x1Filler.WIDTH * scale,
-      Plat1x1Filler.HEIGHT * scale
-    );
     ctx.drawImage(
       Image,
       Plat1x1Filler.SRC_X,

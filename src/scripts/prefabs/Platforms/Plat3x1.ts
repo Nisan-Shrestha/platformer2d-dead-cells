@@ -39,8 +39,6 @@ export default class Plat3x1 extends Platform {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Plat3x1.WIDTH * scale, Plat3x1.HEIGHT * scale);
     ctx.drawImage(
       Image,
       Plat3x1.SRC_X,

@@ -37,8 +37,6 @@ export default class Bow extends Ranged {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Bow.MAP_WIDTH * scale, Bow.MAP_HEIGHT * scale);
     ctx.drawImage(
       Image,
       0,

@@ -185,8 +185,6 @@ export default class Comboter extends Enemy {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Comboter.WIDTH * scale, Comboter.HEIGHT * scale);
     ctx.drawImage(
       Image,
       Comboter.SRC_X - Comboter.RENDER_OFFSET_X * 1.5,

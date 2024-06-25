@@ -66,7 +66,7 @@ const menuButtons: IMenuButton[] = [
     rect: new Rect2D(54, 576, 151, 137),
     onClick: () => {
       document.removeEventListener("click", setupMenuButtons);
-      levelManager.loadLevel("Survival", false /*,true */);
+      levelManager.loadLevel("Survival", false, true);
     },
   },
   {
@@ -140,7 +140,7 @@ function setupCanvas() {
   }
 }
 
-function loadMainMenu() {
+export function loadMainMenu() {
   // console.log("Loading Main Menu");
   // console.log("Loading Main Menu:::  ", GameState.menu);
 

@@ -3,7 +3,7 @@ export enum GameState {
   "lost",
   "playing",
   "menu",
-  "editor"
+  "editor",
 }
 export class Rect2D {
   x: number;
@@ -11,28 +11,24 @@ export class Rect2D {
   width: number;
   height: number;
   color: string = "purple";
-  debugDraw: boolean = false;
   // image: Image
   constructor(
     x: number,
     y: number,
     width: number,
     height: number,
-    color: string = "purple",
-    debugDraw: boolean = false
+    color: string = "purple"
   ) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.color = color;
-    this.debugDraw = debugDraw;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = this.color;
     ctx.strokeStyle = this.color;
-    if (this.debugDraw) ctx.strokeRect(this.x, this.y, this.width, this.height);
   }
 }
 

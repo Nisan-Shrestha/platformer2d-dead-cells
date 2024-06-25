@@ -58,7 +58,10 @@ export default class Archer extends Enemy {
     this.commonStateUpdate(delta);
     if (this.inAttackRange && !this.isAttacking) {
       // console.log(this.attackTimer, this.ATTACK_LOAD_TIME);
-      if (this.attackTimer <= this.ATTACK_LOAD_TIME * LevelManager.LoadTimeModFactor)
+      if (
+        this.attackTimer <=
+        this.ATTACK_LOAD_TIME * LevelManager.LoadTimeModFactor
+      )
         this.attackTimer += delta;
       else {
         this.attackTimer = 0;
@@ -69,7 +72,11 @@ export default class Archer extends Enemy {
     }
     // console.log(this.isAttacking, this.spriteRenderer.isAnimComplete());
     if (this.isAttacking) {
-      this.tryShoot();
+      if (this.spriteRenderer.animationProgress >= 0.8 && this.shootable) {
+        this.shootable = false;
+        // this.timeOutID = setTimeout(() => {
+        this.shoot();
+      }
       if (this.spriteRenderer.isAnimComplete()) {
         this.shootable = true;
         this.isAttacking = false;
@@ -89,18 +96,6 @@ export default class Archer extends Enemy {
     ) {
       // console.log("drawing");
     }
-  }
-
-  tryShoot() {
-    if (this.currentAnim == AnimInfo.archerShoot && this.shootable) {
-      this.shootable = false;
-      this.timeOutID = setTimeout(() => {
-        this.shoot();
-      }, AnimInfo.archerShoot.animationLength * 0.8);
-      // console.log("drawing");
-    }
-
-    // console.log("archer attack");
   }
 
   shoot() {
@@ -130,8 +125,6 @@ export default class Archer extends Enemy {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Archer.WIDTH * scale, Archer.HEIGHT * scale);
     ctx.drawImage(
       Image,
       Archer.SRC_X - Archer.RENDER_OFFSET_X,

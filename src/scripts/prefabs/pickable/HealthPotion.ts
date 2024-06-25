@@ -36,8 +36,6 @@ export default class HealthPotion extends Pickable {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, HealthPotion.WIDTH * scale, HealthPotion.HEIGHT * scale);
     ctx.drawImage(
       Image,
       HealthPotion.SRC_X,

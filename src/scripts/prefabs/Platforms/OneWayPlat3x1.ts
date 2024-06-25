@@ -39,13 +39,6 @@ export default class OneWayPlat3x1 extends Platform {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(
-      x,
-      y,
-      OneWayPlat3x1.WIDTH * scale,
-      OneWayPlat3x1.HEIGHT * scale
-    );
     ctx.drawImage(
       Image,
       OneWayPlat3x1.SRC_X,

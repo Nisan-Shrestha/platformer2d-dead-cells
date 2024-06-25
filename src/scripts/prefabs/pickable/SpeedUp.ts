@@ -36,8 +36,6 @@ export default class SpeedUp extends Pickable {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, SpeedUp.WIDTH * scale, SpeedUp.HEIGHT * scale);
     ctx.drawImage(
       Image,
       SpeedUp.SRC_X,

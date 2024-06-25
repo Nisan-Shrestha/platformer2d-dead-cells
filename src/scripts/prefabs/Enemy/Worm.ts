@@ -123,8 +123,6 @@ export default class Worm extends Enemy {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Worm.WIDTH * scale, Worm.HEIGHT * scale);
     ctx.drawImage(
       Image,
       Worm.SRC_X,

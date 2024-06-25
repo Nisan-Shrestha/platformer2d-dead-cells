@@ -36,8 +36,6 @@ export default class HealthUp extends Pickable {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, HealthUp.WIDTH * scale, HealthUp.HEIGHT * scale);
     ctx.drawImage(
       Image,
       HealthUp.SRC_X,

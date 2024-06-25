@@ -40,8 +40,6 @@ export default class SwordPicker extends Pickable {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, SwordPicker.WIDTH * scale, SwordPicker.HEIGHT * scale);
     ctx.drawImage(
       Image,
       SwordPicker.SRC_X,

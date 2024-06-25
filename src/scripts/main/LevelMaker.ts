@@ -354,9 +354,10 @@ export class LevelMaker {
     // Draw Boundary
     ctx.strokeStyle = "red";
     ctx.strokeRect(startX, startY, cellSize * columnCount, cellSize * rowCount);
+    ctx.globalAlpha=.3;
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
-
+    
     // Draw vertical lines
     ctx.beginPath();
     for (let i = 0; i <= columnCount && startX + cellSize * i < endX; i++) {
@@ -366,7 +367,7 @@ export class LevelMaker {
         Math.min(endY, startY + cellSize * rowCount)
       );
     }
-
+    
     // Draw horizontal lines
     for (let i = 0; i <= rowCount && startY + cellSize * i < endY; i++) {
       ctx.moveTo(startX, startY + cellSize * i);
@@ -377,7 +378,8 @@ export class LevelMaker {
       );
     }
     ctx.stroke();
-
+    ctx.globalAlpha=1;
+    
     this.populateGrid();
     this.DrawMapMenu();
     this.DrawPrefabMenu();

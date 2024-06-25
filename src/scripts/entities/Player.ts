@@ -321,7 +321,7 @@ class Player {
           colliderRect
         )
       ) {
-        collider.debugDraw(ctx);
+        // collider.debugDraw(ctx);
         let dir = RectCollider.getAABBDirection(this.collider, collider);
         // console.log(dir);
         if (
@@ -479,8 +479,6 @@ class Player {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Player.WIDTH * scale, Player.HEIGHT * scale);
     ctx.drawImage(
       Image,
       Player.SRC_X - Player.RENDER_OFFSET_X,
@@ -495,16 +493,16 @@ class Player {
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    ctx.globalAlpha = 0.8;
-    this.rangedWeapon.debugDraw(ctx);
-    this.meleeWeapon.debugDraw(ctx, "green");
+    // ctx.globalAlpha = 0.8;
+    // // this.rangedWeapon.debugDraw(ctx);
+    // // this.meleeWeapon.debugDraw(ctx, "green");
 
-    ctx.globalAlpha = 0.2;
-    ctx.fillStyle = "red";
-    this.collider.debugDraw(ctx, "red");
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = "green";
-    this.groundCheckCollider.debugDraw(ctx, "green");
+    // ctx.globalAlpha = 0.2;
+    // ctx.fillStyle = "red";
+    // // this.collider.debugDraw(ctx, "red");
+    // ctx.globalAlpha = 0.5;
+    // ctx.fillStyle = "green";
+    // this.groundCheckCollider.debugDraw(ctx, "green");
     ctx.globalAlpha = 1;
     this.spriteRenderer.render(ctx);
     this.healthBar.render(ctx);

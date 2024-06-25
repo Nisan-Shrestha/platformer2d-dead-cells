@@ -44,7 +44,7 @@ export default class Enemy {
   alpha: number = 1;
   attackTimer: number = 0;
   readonly ATTACK_LOAD_TIME: number = 1400;
-  readonly INVINCIBLE_TIMER: number = 700;
+  readonly INVINCIBLE_TIMER: number = 600;
 
   ScoreAmt: number = 10;
   constructor(
@@ -134,7 +134,6 @@ export default class Enemy {
       (this.moveSpeed * multiplier * 3) / (this.isAttacking ? 1000 : 100);
     this.moved = true;
   }
-  debugDrawHitbox() {}
 
   moveToPlayer() {
     if (
@@ -236,7 +235,7 @@ export default class Enemy {
         : this.canGoRight;
 
       if (AABBIntersect(enemyCollider, groundColliderRect)) {
-        collider.debugDraw(ctx);
+        // collider.debugDraw(ctx);
         let dir = RectCollider.getAABBDirection(this.collider, collider);
         // console.log(dir);
 
@@ -307,41 +306,15 @@ export default class Enemy {
   }
 
   update(delta: number) {
-    
-    console.log("This enemy class needs an update method, but the delta was: ", delta);
+    console.log(
+      "This enemy class needs an update method, but the delta was: ",
+      delta
+    );
   }
 
   render(ctx: CanvasRenderingContext2D) {
-    // this.collider.debugDraw(ctx, "red");
-    SpriteRenderer.drawOffsetRect(
-      ctx,
-      this.position.x + this.LeftGroundCheckRect.x,
-      this.position.y + this.LeftGroundCheckRect.y,
-      this.LeftGroundCheckRect.width,
-      this.LeftGroundCheckRect.height,
-      "green",
-      0.5
-    );
-    SpriteRenderer.drawOffsetRect(
-      ctx,
-      this.position.x + this.RightGroundCheckRect.x,
-      this.position.y + this.RightGroundCheckRect.y,
-      this.RightGroundCheckRect.width,
-      this.RightGroundCheckRect.height,
-      "green",
-      0.5
-    );
-    this.groundCheckCollider.debugDraw(ctx, "blue");
     this.spriteRenderer.render(ctx, this.alpha);
     this.healthBar.render(ctx);
-    this.debugDrawHitbox();
-    let r = new Rect2D(
-      this.position.x,
-      this.position.y,
-      this.collider.width,
-      this.collider.height
-    );
-    SpriteRenderer.drawOffsetRect(ctx, r.x, r.y, r.width, r.height, "red", 0.5);
     ctx.fillStyle = "blue";
   }
 

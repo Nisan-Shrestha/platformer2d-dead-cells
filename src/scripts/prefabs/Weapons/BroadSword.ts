@@ -110,13 +110,6 @@ export default class BroadSword extends Melee {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(
-      x,
-      y,
-      BroadSword.MAP_WIDTH * scale,
-      BroadSword.MAP_HEIGHT * scale
-    );
     ctx.drawImage(
       Image,
       0,

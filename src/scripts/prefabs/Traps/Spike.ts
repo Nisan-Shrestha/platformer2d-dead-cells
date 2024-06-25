@@ -40,8 +40,8 @@ export default class Spike extends Trap {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, Spike.WIDTH * scale, Spike.HEIGHT * scale);
+    // ctx.fillStyle = "lightgray";
+    // ctx.fillRect(x, y, Spike.WIDTH * scale, Spike.HEIGHT * scale);
     ctx.drawImage(
       Image,
       Spike.SRC_X - Spike.RENDER_OFFSET_X,

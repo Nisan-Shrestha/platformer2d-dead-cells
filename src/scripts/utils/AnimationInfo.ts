@@ -27,7 +27,7 @@ const playerFall: IAnimInfo = {
 };
 const playerAtkSword: IAnimInfo = {
   frameCount: 13,
-  animationLength: 700,
+  animationLength: 600,
   frameGap: 0,
 };
 const playerAtkBroadSword: IAnimInfo = {
@@ -41,7 +41,7 @@ const bow: IAnimInfo = {
   frameGap: 0,
 };
 const comboterIdle: IAnimInfo = {
-  frameCount: 34,
+  frameCount: 33,
   animationLength: 2500,
   frameGap: 0,
 };

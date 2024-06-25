@@ -15,7 +15,7 @@ export default class OneWayPlat1x1 extends Platform {
     super(
       position.x,
       position.y,
-      OneWayPlat1x1.WIDTH,
+      OneWayPlat1x1.WIDTH+1,
       OneWayPlat1x1.HEIGHT,
       SpriteImages.woodenPlatform,
       true
@@ -39,13 +39,6 @@ export default class OneWayPlat1x1 extends Platform {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(
-      x,
-      y,
-      OneWayPlat1x1.WIDTH * scale,
-      OneWayPlat1x1.HEIGHT * scale
-    );
     ctx.drawImage(
       Image,
       OneWayPlat1x1.SRC_X,

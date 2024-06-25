@@ -43,8 +43,6 @@ export default class ToxicWater extends Trap {
     Image: HTMLImageElement,
     scale: number = 1
   ) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(x, y, ToxicWater.WIDTH * scale, ToxicWater.HEIGHT * scale);
     ctx.drawImage(
       Image,
       ToxicWater.SRC_X,
