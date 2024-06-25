@@ -1,5 +1,6 @@
 import Player from "../entities/Player";
-import { Rect2D, ColliderLayer } from "../utils/utils";
+import { ColliderLayer } from "../utils/utils";
+import SpriteRenderer from "./SpriteRenderer";
 
 class RectCollider {
   layer: ColliderLayer;
@@ -10,7 +11,12 @@ class RectCollider {
   offset: boolean = false;
   offsetX: number = 0;
   offsetY: number = 0;
-  static colliderArray: RectCollider[] = [];
+  static groundColliderArray: RectCollider[] = [];
+  static EnemyColliderArray: RectCollider[] = [];
+  static PlayerProjectileColliderArray: RectCollider[] = [];
+  static EnemyProjectileColliderArray: RectCollider[] = [];
+  static PlayerCollider: RectCollider | null;
+  static ConsumableColliderArray: any;
   constructor(
     parent: any,
     width: number,
@@ -28,10 +34,33 @@ class RectCollider {
     this.offsetY = offsetY;
     // this.rect = new Rect2D(this.parentObj.position.x, this.parentObj.position.y, rect.width, rect.height, "red", true);
     this.layer = layer;
-    RectCollider.colliderArray.push(this);
+    // export enum ColliderLayer {
+    //   Player = 1 << 0,
+    //   Enemy = 1 << 1,
+    //   PlayerProjectile = 1 << 3,
+    //   EnemyProjectile = 1 << 4,
+    //   Ground = 1 << 5,
+    //   Consumable = 1 << 6,
+    // }
+    if (layer == ColliderLayer.Ground)
+      RectCollider.groundColliderArray.push(this);
+    if (layer == ColliderLayer.Player) RectCollider.PlayerCollider = this;
+    if (layer == ColliderLayer.Enemy)
+      RectCollider.EnemyColliderArray.push(this);
+    if (layer == ColliderLayer.PlayerProjectile)
+      RectCollider.PlayerProjectileColliderArray.push(this);
+    if (layer == ColliderLayer.EnemyProjectile)
+      RectCollider.EnemyProjectileColliderArray.push(this);
+    if (layer == ColliderLayer.Consumable)
+      RectCollider.ConsumableColliderArray.push(this);
   }
   static clearAll() {
-    RectCollider.colliderArray = [];
+    RectCollider.ConsumableColliderArray = [];
+    RectCollider.groundColliderArray = [];
+    RectCollider.EnemyColliderArray = [];
+    RectCollider.PlayerProjectileColliderArray = [];
+    RectCollider.EnemyProjectileColliderArray = [];
+    RectCollider.PlayerCollider = null;
   }
   // static canCollide(collider1:RectCollider, collider2:RectCollider){
   //   return (collider1.layer ) != 0;
@@ -39,9 +68,9 @@ class RectCollider {
 
   debugDraw(ctx: CanvasRenderingContext2D, color: string = "black") {
     // this.rect.draw(ctx);
-    ctx.globalAlpha = .5
-    ctx.fillStyle = color;
-    ctx.fillRect(
+    // ctx.globalAlpha = 0.5;
+    SpriteRenderer.drawOffsetRect(
+      ctx,
       this.parentObj.position.x +
         (this.offset ? this.offsetX : 0) +
         (this.parentObj instanceof Player ? Player.RENDER_OFFSET_X : 0),
@@ -49,16 +78,13 @@ class RectCollider {
         (this.offset ? this.offsetY : 0) +
         (this.parentObj instanceof Player ? Player.RENDER_OFFSET_X : 0),
       this.width,
-      this.height
+      this.height,
+      color,
+      0.5
     );
-    ctx.globalAlpha = 1
-    // ctx.fillRect(100,100,100,100)
-    // if (this.parentObj instanceof Player) {
-    //   console.log(this.width, this.height)
-
-    // }
   }
-  //moves colliderA parent position to not collide with colliberB
+
+  //returns direction to move colliderA for  colliderA parent position to not collide with colliberB
   static getAABBDirection(A: RectCollider, B: RectCollider): string {
     let aTop = A.parentObj.position.y;
     let aBottom = A.parentObj.position.y + A.height;
@@ -127,11 +153,11 @@ class RectCollider {
         return "left";
       }
     }
-    console.log(aTop, aBottom, aLeft, aRight);
-    console.log(bTop, bBottom, bLeft, bRight);
-    console.log(
-      `topEdgeOverlap: ${topEdgeOverlap},  bottomEdgeOverlap: ${bottomEdgeOverlap},  leftEdgeOverlap: ${leftEdgeOverlap},  rightEdgeOverlap: ${rightEdgeOverlap},  `
-    );
+    // console.log(aTop, aBottom, aLeft, aRight);
+    // console.log(bTop, bBottom, bLeft, bRight);
+    // console.log(
+    //   `topEdgeOverlap: ${topEdgeOverlap},  bottomEdgeOverlap: ${bottomEdgeOverlap},  leftEdgeOverlap: ${leftEdgeOverlap},  rightEdgeOverlap: ${rightEdgeOverlap},  `
+    // );
     return "none";
   }
 

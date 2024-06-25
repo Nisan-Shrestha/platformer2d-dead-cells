@@ -1,21 +1,63 @@
-import Plat1 from "../prefabs/Plat1";
 import Player from "../entities/Player";
+import Archer from "../prefabs/Enemy/Archer";
+import Comboter from "../prefabs/Enemy/Comboter";
+import Worm from "../prefabs/Enemy/Worm";
+import NormalArrow from "../prefabs/Weapons/NormalArrow";
+import SwordPicker from "../prefabs/weaponPicks/SwordPicker";
+import BroadSwordPicker from "../prefabs/weaponPicks/BroadSwordPicker";
+import OneWayPlat1x1 from "../prefabs/Platforms/OneWayPlat1x1";
+import OneWayPlat3x1 from "../prefabs/Platforms/OneWayPlat3x1";
+import Plat1x1Filler from "../prefabs/Platforms/Plat1x1Filler";
+import Plat1x3 from "../prefabs/Platforms/Plat1x3";
+import Plat2x1 from "../prefabs/Platforms/Plat2x1";
+import Plat3x1 from "../prefabs/Platforms/Plat3x1";
+import Plat3x3 from "../prefabs/Platforms/Plat3x3";
+import HealthPotion from "../prefabs/pickable/HealthPotion";
+import Spike from "../prefabs/Traps/Spike";
+import ToxicWater from "../prefabs/Traps/ToxicWater";
+import Eraser from "../entities/Eraser";
+import HealthUp from "../prefabs/pickable/HealthUp";
+import SpeedUp from "../prefabs/pickable/SpeedUp";
+import AtkUp from "../prefabs/pickable/AtkUp";
 
-const Constants = {
-  MAX_DELTA: 1000/30,
-  PLAYER_MOVE_SPEED_X: 0.1,
-  PLAYER_DRAG_X: 0.1,
-  PLAYER_JUMP_POWER: 1,
-  GRAVITY: 3 / 1000,
+const Globals = {
+  keysPressed: new Set<string>(),
+  MAX_DELTA: 1000 / 30,
+  PLAYER_MOVE_SPEED_X: 0.125,
+  PLAYER_DRAG_X: 0.2,
+  PLAYER_JUMP_POWER: 0.4,
+  GRAVITY: 1 / 1000,
   scale: 1,
   REF_WIDTH: 1365,
   REF_HEIGHT: 768,
-  prefabArr: [null, Plat1, Player],
-  prefabArrSizes: [
-    { w: 0, h: 0 },
-    { w: 32 * 2, h: 32 },
-    { w: 32, h: 32 },
+  prefabArr: [
+    Eraser,
+    Player,
+    OneWayPlat1x1,
+    OneWayPlat3x1,
+    Plat1x1Filler,
+    Plat1x3,
+    Plat2x1,
+    Plat3x1,
+    Plat3x3,
+    Archer,
+    Comboter,
+    Worm,
+    HealthPotion,
+    Spike,
+    ToxicWater,
+    BroadSwordPicker,
+    SwordPicker,
+    HealthUp,
+    SpeedUp,
+    AtkUp,
   ],
+  enemyDropArr: [HealthPotion, HealthUp, SpeedUp, AtkUp],
+  playerProjectileArr: [NormalArrow],
+  weaponPickerMap: {
+    Sword: SwordPicker,
+    BroadSword: BroadSwordPicker,
+  },
 };
 
-export default Constants;
+export default Globals;

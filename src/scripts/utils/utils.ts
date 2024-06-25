@@ -1,3 +1,10 @@
+export enum GameState {
+  "won",
+  "lost",
+  "playing",
+  "menu",
+  "editor"
+}
 export class Rect2D {
   x: number;
   y: number;
@@ -48,21 +55,26 @@ export function AABBIntersect(rect1: Rect2D, rect2: Rect2D) {
 }
 
 export interface IKeymap {
-  left: string;
-  right: string;
-  jump: string;
-  attackA: string;
+  left: string | string[];
+  right: string | string[];
+  jump: string | string[];
+  atkA: string | string[];
+  atkB: string | string[];
+  interact: string | string[];
 }
 
-export interface Button {
-  text: string;
+export interface IMenuButton {
+  text?: string;
   rect: Rect2D;
   onClick: () => void;
-  active: boolean;
+  active?: boolean;
+  prefab?: any;
+  prefabNumber?: number;
+  defaultSprite?: HTMLImageElement;
 }
 export function renderButton(
   ctx: CanvasRenderingContext2D,
-  button: Button,
+  button: IMenuButton,
   color: string = "white",
   textColor: string = "black"
 ) {
@@ -76,10 +88,10 @@ export function renderButton(
   ctx.fillStyle = textColor;
   ctx.font = "20px Arial";
   ctx.fillText(
-    button.text,
+    button.text ? button.text : "",
     button.rect.x +
       button.rect.width / 2 -
-      ctx.measureText(button.text).width / 2,
+      ctx.measureText(button.text ? button.text : "").width / 2,
     button.rect.y + button.rect.height / 2 + 8
   );
 }
@@ -90,7 +102,9 @@ export enum ColliderLayer {
   PlayerProjectile = 1 << 3,
   EnemyProjectile = 1 << 4,
   Ground = 1 << 5,
-  Consumable = 1 << 6,
+  Traps = 1 << 6,
+  Consumable = 1 << 7,
+  Utility = 1 << 8,
 }
 export enum ColliderMask {
   Player = ColliderLayer.Enemy |

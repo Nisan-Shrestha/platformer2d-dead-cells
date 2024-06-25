@@ -1,24 +1,79 @@
+import Globals from "../utils/constants";
 import { SpriteImages } from "./../utils/ImageRepo";
-import Plat1 from "../prefabs/Plat1";
-import Constants from "../utils/constants";
-import { ctx } from "./main";
-import Eraser from "../entities/Eraser";
+import { ctx, tryLoadMainMenu } from "./main";
 // enum Prefab {
 //   Plat1 = 1,
 // }
-import { Rect2D, renderButton } from "../utils/utils";
-import { env } from "process";
 import Player from "../entities/Player";
-interface Button {
+import { GameState, IMenuButton, Rect2D, renderButton } from "../utils/utils";
+import LevelManager from "./LevelManager";
+// console.log(this)
+
+const mapButtonConfigs: {
   text: string;
-  rect: Rect2D;
-  onClick: () => void;
-  active: boolean;
-}
+  onClick: (thisRef: LevelMaker) => void;
+}[] = [
+  { text: "Add Row", onClick: (thisRef) => thisRef.addRows() },
+  { text: "Add Column", onClick: (thisRef) => thisRef.addCols() },
+  {
+    text: "Move Left",
+    onClick: (thisRef) => {
+      thisRef.offsetX = Math.max(0, thisRef.offsetX - 1);
+    },
+  },
+  {
+    text: "Move Right",
+    onClick: (thisRef) => {
+      thisRef.offsetX = Math.max(0, thisRef.offsetX + 1);
+    },
+  },
+  {
+    text: "Move Down",
+    onClick: (thisRef) => {
+      thisRef.offsetY = Math.max(0, thisRef.offsetY + 1);
+    },
+  },
+  {
+    text: "Move Up",
+    onClick: (thisRef) => {
+      thisRef.offsetY = Math.max(0, thisRef.offsetY - 1);
+    },
+  },
+  {
+    text: "Save Map",
+    onClick: (thisRef) => {
+      thisRef.serializeGridToFile("customLevel");
+      console.log(JSON.stringify(thisRef.grid));
+    },
+  },
+  {
+    text: "Download",
+    onClick: (thisRef) => {
+      thisRef.downloadJSON("customLevel", "customLevel.json");
+      console.log(JSON.stringify(thisRef.grid));
+    },
+  },
+  {
+    text: "Reset Map",
+    onClick: (thisRef) => {
+      thisRef.rowCount = 24;
+      thisRef.columnCount = 43;
+      thisRef.initializeGrid();
+    },
+  },
+  {
+    text: "Play",
+    onClick: (context) => {
+      context.serializeGridToFile("customLevel");
+      console.log("Map saved locally");
+      new LevelManager().loadLevel("", true);
+    },
+  },
+];
 
 export class LevelMaker {
-  rowCount = 4;
-  columnCount = 4;
+  rowCount = 24;
+  columnCount = 43;
   grid: number[][];
   activePrefab: number = -1;
   offsetX: number = 0;
@@ -27,16 +82,36 @@ export class LevelMaker {
   //sprites defination
   envSprite: HTMLImageElement = SpriteImages.envSprite;
   eraserSprite: HTMLImageElement = SpriteImages.eraserSprite;
-  prefabButtonsToSetup: any[] = [];
-  menuButtonsToSetup: any[] = [];
+  prefabButtonsToSetup: IMenuButton[] = [];
+  menuButtonsToSetup: IMenuButton[] = [];
+
   isPrefabMenuSetup: boolean = false;
   isMapMenuSetup: boolean = false;
+
+  prefabConfigs: {
+    prefab: any;
+    prefabNumber: number;
+    width: number;
+    height: number;
+    defaultSprite: HTMLImageElement;
+  }[] = [
+    ...Globals.prefabArr.map((prefab, index) => ({
+      prefab,
+      prefabNumber: index == 0 ? -1 : index,
+      width: Globals.prefabArr[index]!.WIDTH,
+      height: Globals.prefabArr[index]!.HEIGHT,
+      defaultSprite: Globals.prefabArr[index]!.defaultSprite,
+    })),
+  ];
+  //listeners
+
   constructor() {
+    // console.log(this.prefabConfigs);
     this.grid = [];
     this.initializeGrid();
+    this.loadGridFromJsonFile("customLevel");
 
     // console.log(JSON.stringify(this.grid));
-    this.loadGridFromJsonFile("activeFile");
 
     // Save the localStorage data to a file
     // this.downloadJSON("testLevel", "testLevel.json");
@@ -108,298 +183,212 @@ export class LevelMaker {
     }
   }
 
-  DrawPrefabMenu() {
-    let itemX = 15;
-    let itemY = Constants.REF_HEIGHT - 50;
-    Eraser.itemPreview(itemX, itemY, ctx, this.eraserSprite, 1);
-    for (
-      let prefabIndex = 1;
-      prefabIndex < Constants.prefabArr.length;
-      prefabIndex++
-    ) {
-      if (!this.isPrefabMenuSetup)
-        this.prefabButtonsToSetup.push({
-          rect: new Rect2D(
-            itemX,
-            itemY,
-            Constants.prefabArrSizes[prefabIndex].w,
-            Constants.prefabArrSizes[prefabIndex].h
-          ),
-          scale: 1,
-          prefab: Constants.prefabArr[prefabIndex],
-          prefabNumber: prefabIndex,
-        });
-    }
-    if (!this.isPrefabMenuSetup)
-      this.prefabButtonsToSetup.push({
-        rect: new Rect2D(itemX, itemY, 32, 32),
-        scale: 1,
-        prefab: Eraser,
-        prefabNumber: 0,
-      });
-    itemX += 32 * 1 + 32;
-    Plat1.itemPreview(itemX, itemY, ctx, this.envSprite, 1);
-    if (!this.isPrefabMenuSetup)
-      this.prefabButtonsToSetup.push({
-        rect: new Rect2D(itemX, itemY, 32 * 2, 32),
-        scale: 1,
-        prefab: Plat1,
-        prefabNumber: 1,
-      });
-    itemX += 32 * 2 + 32;
-    Player.itemPreview(itemX, itemY, ctx, this.envSprite, 1);
-    if (!this.isPrefabMenuSetup)
-      this.prefabButtonsToSetup.push({
-        rect: new Rect2D(itemX, itemY, 32 * 2, 32),
-        scale: 1,
-        prefab: Plat1,
-        prefabNumber: 2,
-      });
-    itemX += 32 * 2;
-    // console.log("prefacButons", this.prefabButtonsToSetup);
-    this.isPrefabMenuSetup = true;
+  setupPrefabButtons() {
+    let itemX = 10;
+    let itemY = Globals.REF_HEIGHT - 32 * 4;
+
+    let dx = 0;
+    this.prefabConfigs.forEach((config) => {
+      let dy = 0;
+      let resetY = false;
+      if (itemY + config.height > Globals.REF_HEIGHT - 64) {
+        resetY = true;
+        dy = 0;
+      } else {
+        dy = config.height + 16;
+      }
+
+      dx = Math.max(config.width + 16, dx); // Adjust the spacing as needed
+      // itemX += config.width + 32; // Adjust the spacing as needed
+      const btnConfig: IMenuButton = {
+        rect: new Rect2D(itemX, itemY, config.width, config.height),
+        onClick: () => {
+          this.activePrefab = config.prefabNumber;
+          console.log("Update active Prefab:", this.activePrefab);
+        },
+        active: true,
+        prefab: config.prefab,
+        prefabNumber: config.prefabNumber,
+        defaultSprite: config.defaultSprite,
+      };
+      this.prefabButtonsToSetup.push(btnConfig);
+      if (resetY) {
+        itemY = Globals.REF_HEIGHT - 32 * 4;
+        itemX += dx;
+        dx = 0;
+      } else {
+        itemY += dy;
+      }
+    });
+
+    document.addEventListener("click", this.prefabMenuClickListener);
   }
 
-  setupPrefabButtons() {
-    // console.log("prefab clicked:   ", this.activePrefab, prefabNumber);
-    ctx.canvas.addEventListener("click", (e) => {
-      this.prefabButtonsToSetup.forEach((btn) => {
-        if (
-          e.offsetX / Constants.scale > btn.rect.x &&
-          e.offsetX / Constants.scale < btn.rect.x + btn.rect.width &&
-          e.offsetY / Constants.scale > btn.rect.y &&
-          e.offsetY / Constants.scale < btn.rect.y + btn.rect.height
-        ) {
-          this.activePrefab = btn.prefabNumber;
-          console.log("Update active Prefab:", this.activePrefab);
-        }
-      });
+  prefabMenuClickListener = (e: MouseEvent) => {
+    this.prefabButtonsToSetup.forEach((btn) => {
+      if (
+        e.offsetX / Globals.scale > btn.rect.x &&
+        e.offsetX / Globals.scale < btn.rect.x + btn.rect.width &&
+        e.offsetY / Globals.scale > btn.rect.y &&
+        e.offsetY / Globals.scale < btn.rect.y + btn.rect.height
+      ) {
+        btn.onClick();
+      }
+    });
+  };
 
-      // console.log("Prefab Button listner afte if" , this.activePrefab, prefabNumber);
+  DrawPrefabMenu() {
+    this.prefabButtonsToSetup.forEach((btn) => {
+      btn.prefab?.itemPreview(
+        btn.rect.x,
+        btn.rect.y,
+        ctx,
+        btn.defaultSprite,
+        1
+      );
     });
   }
 
   DrawMapMenu() {
-    let itemX = Constants.REF_WIDTH - 110;
-    let itemY = 96;
-    // console.log("WJNAOSNDOASNDKJN D")
-
-    const addRowButton: Button = {
-      text: "Add Row",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.addRows();
-      },
-      active: true,
-    };
-    renderButton(ctx, addRowButton);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(addRowButton);
-
-    itemY += 48;
-    const addColButton: Button = {
-      text: "Add Column",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.addCols();
-      },
-      active: true,
-    };
-    renderButton(ctx, addColButton);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(addColButton);
-    itemY += 48;
-    const moveLeft: Button = {
-      text: "MoveLeft",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.offsetX -= 1;
-        this.offsetX = Math.max(0, this.offsetX);
-      },
-      active: true,
-    };
-    renderButton(ctx, moveLeft);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(moveLeft);
-    itemY += 48;
-    const moveRight: Button = {
-      text: "moveRight",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.offsetX += 1;
-        this.offsetX = Math.max(0, this.offsetX);
-      },
-      active: true,
-    };
-    renderButton(ctx, moveRight);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(moveRight);
-    itemY += 48;
-    const moveDown: Button = {
-      text: "moveDown",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.offsetY += 1;
-        this.offsetY = Math.max(0, this.offsetY);
-      },
-      active: true,
-    };
-    renderButton(ctx, moveDown);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(moveDown);
-    itemY += 48;
-    const moveUp: Button = {
-      text: "moveUp",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.offsetY -= 1;
-        this.offsetY = Math.max(0, this.offsetY);
-      },
-      active: true,
-    };
-    renderButton(ctx, moveUp);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(moveUp);
-    itemY += 48;
-    const saveMap: Button = {
-      text: "saveMap",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.serializeGridToFile("activeFile");
-        console.log(JSON.stringify(this.grid));
-      },
-      active: true,
-    };
-    renderButton(ctx, saveMap);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(saveMap);
-    itemY += 48;
-    const Download: Button = {
-      text: "Download",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.downloadJSON("activeFile", "activeFile.json");
-        console.log(JSON.stringify(this.grid));
-      },
-      active: true,
-    };
-    renderButton(ctx, Download);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(Download);
-    itemY += 48;
-    const ResetMap: Button = {
-      text: "ResetMap",
-      rect: new Rect2D(itemX, itemY, 110, 32),
-      onClick: () => {
-        this.rowCount = 5;
-        this.columnCount = 5;
-        this.initializeGrid();
-      },
-      active: true,
-    };
-    renderButton(ctx, ResetMap);
-    if (!this.isMapMenuSetup) this.menuButtonsToSetup.push(ResetMap);
-
-    this.isMapMenuSetup = true;
-  }
-
-  setupMenuButtons() {
-    // console.log("prefab clicked:   ", this.activePrefab, prefabNumber);
-    ctx.canvas.addEventListener("click", (e) => {
-      this.menuButtonsToSetup.forEach((btn) => {
-        if (
-          e.offsetX / Constants.scale > btn.rect.x &&
-          e.offsetX / Constants.scale < btn.rect.x + btn.rect.width &&
-          e.offsetY / Constants.scale > btn.rect.y &&
-          e.offsetY / Constants.scale < btn.rect.y + btn.rect.height
-        ) {
-          console.log("somehtingn happended");
-          btn.onClick();
-        }
-      });
-
-      // console.log("Prefab Button listner afte if" , this.activePrefab, prefabNumber);
+    ctx.textAlign = "left";
+    ctx.font = "32px monospace";
+    this.menuButtonsToSetup.forEach((btn) => {
+      renderButton(ctx, btn);
     });
   }
+  setupMenuButtons() {
+    let itemX = Globals.REF_WIDTH - 118;
+    let itemY = 96;
+
+    mapButtonConfigs.forEach((button) => {
+      const btnConfig: IMenuButton = {
+        text: button.text,
+        rect: new Rect2D(itemX, itemY, 110, 32),
+        onClick: () => button.onClick(this),
+        active: true,
+      };
+      this.menuButtonsToSetup.push(btnConfig);
+      itemY += 48;
+    });
+
+    document.addEventListener("click", this.mapMenuClickListener);
+  }
+  mapMenuClickListener = (e: MouseEvent) => {
+    this.menuButtonsToSetup.forEach((btn) => {
+      if (
+        e.offsetX / Globals.scale > btn.rect.x &&
+        e.offsetX / Globals.scale < btn.rect.x + btn.rect.width &&
+        e.offsetY / Globals.scale > btn.rect.y &&
+        e.offsetY / Globals.scale < btn.rect.y + btn.rect.height
+      ) {
+        btn.onClick();
+      }
+    });
+  };
 
   loadEditor() {
+    LevelManager.gameState = GameState.editor;
     console.log("loading editor");
-    document.addEventListener("click", (event) => {
-      const mouseX = event.offsetX;
-      const mouseY = event.offsetY;
-      this.setGridValue(mouseX, mouseY);
-    });
+    this.grid = [];
+    this.initializeGrid();
+    this.loadGridFromJsonFile("customLevel");
+
+    document.addEventListener("mousemove", this.setupGridPlacerOnMove);
+    document.addEventListener("mousedown", this.setupGridPlacerOnClick);
 
     //save menu
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "s") {
-        this.serializeGridToFile("activeFile");
-        console.log(JSON.stringify(this.grid));
-      }
-      if (event.key === "t") {
-        console.log("activePrefab: ", this.activePrefab, "grid: ", this.grid);
-      }
-    });
+
     this.DrawGrid();
     this.setupMenuButtons();
     this.setupPrefabButtons();
     this.serializeGridToFile("level.json");
+    document.removeEventListener("keydown", tryLoadMainMenu);
+    document.addEventListener("keydown", tryLoadMainMenu);
   }
 
+  setupGridPlacerOnMove = (event: MouseEvent) => {
+    // console.log("Globals.keysPressed:", Globals.keysPressed);
+    if (Globals.keysPressed.has("leftM")) {
+      const mouseX = event.offsetX;
+      const mouseY = event.offsetY;
+      this.setGridValue(mouseX, mouseY);
+    } else if (Globals.keysPressed.has("rightM")) {
+      const mouseX = event.offsetX;
+      const mouseY = event.offsetY;
+      this.setGridValue(mouseX, mouseY, true);
+    }
+  };
+
+  setupGridPlacerOnClick = (event: MouseEvent) => {
+    console.log("current button:", event.button);
+    if (event.button === 0) {
+      const mouseX = event.offsetX;
+      const mouseY = event.offsetY;
+      this.setGridValue(mouseX, mouseY);
+    } else if (event.button === 2) {
+      const mouseX = event.offsetX;
+      const mouseY = event.offsetY;
+      this.setGridValue(mouseX, mouseY, true);
+    }
+  };
+
   DrawGrid() {
-    ctx.clearRect(0, 0, Constants.REF_WIDTH, Constants.REF_HEIGHT);
-    this.DrawMapMenu();
-    this.DrawPrefabMenu();
+    if (LevelManager.gameState != GameState.editor) {
+      document.removeEventListener("click", this.mapMenuClickListener);
+      document.removeEventListener("click", this.prefabMenuClickListener);
+      document.removeEventListener("mousemove", this.setupGridPlacerOnMove);
+      document.removeEventListener("mousedown", this.setupGridPlacerOnClick);
+      return;
+    }
+    ctx.clearRect(0, 0, Globals.REF_WIDTH, Globals.REF_HEIGHT);
+    
+
     const cellSize = 16;
     const startX = 16;
     const startY = 16;
-    const endX = Constants.REF_WIDTH - 128 - 16 * this.offsetX;
-    const endY = Constants.REF_HEIGHT - 128 - 16 * this.offsetY;
+    const endX = Globals.REF_WIDTH - 154;
+    const endY = Globals.REF_HEIGHT - 154;
+    const columnCount = this.columnCount - this.offsetX;
+    const rowCount = this.rowCount - this.offsetY;
 
     // Draw Boundary
     ctx.strokeStyle = "red";
-    ctx.strokeRect(
-      startX,
-      startY,
-      16 * (this.columnCount - this.offsetX),
-      16 * (this.rowCount - this.offsetY)
-    );
+    ctx.strokeRect(startX, startY, cellSize * columnCount, cellSize * rowCount);
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
 
-    //draw vertical lines
-    for (
-      let i = 0;
-      i <= this.columnCount - this.offsetX && startX + 16 * i < endX;
-      i++
-    ) {
-      ctx.beginPath();
-      ctx.moveTo(16 + i * 16, startY);
+    // Draw vertical lines
+    ctx.beginPath();
+    for (let i = 0; i <= columnCount && startX + cellSize * i < endX; i++) {
+      ctx.moveTo(startX + cellSize * i, startY);
       ctx.lineTo(
-        16 + i * 16,
-        Math.min(endY, 16 + 16 * (this.rowCount - this.offsetY))
+        startX + cellSize * i,
+        Math.min(endY, startY + cellSize * rowCount)
       );
-      ctx.stroke();
-    }
-    //draw horizontal lines
-    for (
-      let i = 0;
-      i <= this.rowCount - this.offsetY && startX + 16 * i < endX;
-      i++
-    ) {
-      ctx.beginPath();
-      ctx.moveTo(startX, 16 + i * 16);
-      ctx.lineTo(
-        Math.min(endX, 16 + 16 * (this.columnCount - this.offsetX)),
-        16 + i * 16
-      );
-      ctx.stroke();
     }
 
+    // Draw horizontal lines
+    for (let i = 0; i <= rowCount && startY + cellSize * i < endY; i++) {
+      ctx.moveTo(startX, startY + cellSize * i);
+      console.log(endX, startX + cellSize * columnCount);
+      ctx.lineTo(
+        Math.min(endX, startX + cellSize * columnCount),
+        startY + cellSize * i
+      );
+    }
+    ctx.stroke();
+
     this.populateGrid();
+    this.DrawMapMenu();
+    this.DrawPrefabMenu();
     requestAnimationFrame(() => this.DrawGrid());
-    // two corner debug
-    // ctx.fillRect(32 * 0 + 16, 32 * 0 + 16, 16, 16);
-    // ctx.fillRect(31 * 16 + 16, 31 * 16 + 16, 16, 16);
   }
   populateGrid() {
     this.playerPresent = false;
     for (let i = 0; i < this.rowCount; i++) {
       for (let j = 0; j < this.columnCount; j++) {
         if (this.grid[i][j] != -1) {
-          const item = Constants.prefabArr[this.grid[i][j]];
+          const item = Globals.prefabArr[this.grid[i][j]];
           if (item == Player && !this.playerPresent) {
             this.playerPresent = true;
           } else if (item == Player && this.playerPresent) {
@@ -410,7 +399,7 @@ export class LevelMaker {
             (j - this.offsetX) * 16 + 16,
             (i - this.offsetY) * 16 + 16,
             ctx,
-            this.envSprite,
+            item.defaultSprite,
             0.5
           );
         }
@@ -418,14 +407,14 @@ export class LevelMaker {
     }
   }
 
-  setGridValue(mouseX: number, mouseY: number) {
+  setGridValue(mouseX: number, mouseY: number, eraseMode: boolean = false) {
     const cellSize = 16;
     const startX = 16;
     const startY = 16;
-    const endX = Constants.REF_WIDTH - 64;
-    const endY = Constants.REF_HEIGHT - 64;
-    mouseX = mouseX / Constants.scale;
-    mouseY = mouseY / Constants.scale;
+    const endX = Globals.REF_WIDTH - 154;
+    const endY = Globals.REF_HEIGHT - 154;
+    mouseX = mouseX / Globals.scale;
+    mouseY = mouseY / Globals.scale;
 
     if (
       mouseX >= startX &&
@@ -438,15 +427,22 @@ export class LevelMaker {
       if (i > this.columnCount || j > this.rowCount) {
         return;
       }
-      if (Constants.prefabArr[this.activePrefab] != Player) {
-        if (this.grid[j][i] === Constants.prefabArr.indexOf(Player)) {
+      if (eraseMode) {
+        if (this.grid[j][i] === Globals.prefabArr.indexOf(Player)) {
+          this.playerPresent = false;
+        }
+        this.grid[j][i] = -1;
+        return;
+      }
+      if (Globals.prefabArr[this.activePrefab] != Player) {
+        if (this.grid[j][i] === Globals.prefabArr.indexOf(Player)) {
           this.playerPresent = false;
         }
         this.grid[j][i] = this.activePrefab;
         ctx.fillStyle = "red";
         ctx.fillRect(i * 16 + 16, j * 16 + 16, 16, 16);
       } else if (
-        Constants.prefabArr[this.activePrefab] == Player &&
+        Globals.prefabArr[this.activePrefab] == Player &&
         !this.playerPresent
       ) {
         this.grid[j][i] = this.activePrefab;
