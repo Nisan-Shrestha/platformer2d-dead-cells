@@ -15,7 +15,7 @@ export default class HealthUp extends Pickable {
 
   constructor(position: Vect2D) {
     super(
-      "Speed Up",
+      "Health Up",
       `Increases Max Health by ${HealthUp.increaseAmt * 100} Points`,
       position,
       new Vect2D(32 * 3, 32 * 3),

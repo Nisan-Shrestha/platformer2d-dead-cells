@@ -26,13 +26,14 @@ export function tryLoadMainMenu(event: KeyboardEvent) {
     loadMainMenu();
   }
 }
-
 document.addEventListener("contextmenu", (event) => event.preventDefault());
+
 window.onload = () => {
   setupCanvas();
   setupGlobalControls();
   loadMainMenu();
 };
+
 let levelMaker: LevelMaker;
 let levelManager: LevelManager;
 
@@ -82,7 +83,7 @@ const menuButtons: IMenuButton[] = [
     rect: new Rect2D(327, 375, 213, 137),
     onClick: () => {
       LevelManager.DamageModFactor = 1;
-      LevelManager.DamageModFactor = 1;
+      LevelManager.LoadTimeModFactor = 1;
       ctx.drawImage(SpriteImages.selected, 441, 381);
       ctx.drawImage(SpriteImages.unselected, 441, 473);
     },
@@ -91,7 +92,7 @@ const menuButtons: IMenuButton[] = [
     //Hard Button
     rect: new Rect2D(327, 474, 213, 137),
     onClick: () => {
-      LevelManager.DamageModFactor = 0.7;
+      LevelManager.LoadTimeModFactor = 0.7;
       LevelManager.DamageModFactor = 1.5;
       ctx.drawImage(SpriteImages.selected, 441, 473);
       ctx.drawImage(SpriteImages.unselected, 441, 381);
@@ -129,22 +130,13 @@ function setupCanvas() {
     Globals.scale = canvas.width / Globals.REF_WIDTH;
     ctx.scale(Globals.scale, Globals.scale);
 
-    // console.log(
-    //   canvas.width / Globals.scale,
-    //   canvas.height / Globals.scale,
-    //   Globals.scale
-    // );
-    // canvas.style.background = "grey";
     canvas.style.backgroundImage = `url(${SpriteImages.background.src})`;
     canvas.style.backgroundSize = "3840px 2160px";
-    canvas.style.backgroundPosition= "0px 0px";
+    canvas.style.backgroundPosition = "0px 0px";
   }
 }
 
 export function loadMainMenu() {
-  // console.log("Loading Main Menu");
-  // console.log("Loading Main Menu:::  ", GameState.menu);
-
   levelMaker = new LevelMaker();
   levelManager = new LevelManager();
   LevelManager.gameState = GameState.menu;

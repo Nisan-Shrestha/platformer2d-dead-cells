@@ -111,6 +111,7 @@ export default class Worm extends Enemy {
         )
       );
       if (a) {
+        console.log(LevelManager.DamageModFactor)
         LevelManager.player!.getHurt(this.damage * LevelManager.DamageModFactor);
       }
     }

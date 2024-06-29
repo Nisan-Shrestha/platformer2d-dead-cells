@@ -102,6 +102,8 @@ export enum ColliderLayer {
   Consumable = 1 << 7,
   Utility = 1 << 8,
 }
+
+// Never used this lol
 export enum ColliderMask {
   Player = ColliderLayer.Enemy |
     ColliderLayer.EnemyProjectile |

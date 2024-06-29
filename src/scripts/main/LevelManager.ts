@@ -109,8 +109,8 @@ export class LevelManager {
 
   // doesnt reset grid, rowCount, columnCount
   resetLevelParams() {
-    LevelManager.LoadTimeModFactor = 1;
-    LevelManager.DamageModFactor = 1;
+    // LevelManager.LoadTimeModFactor = 1;
+    // LevelManager.DamageModFactor = 1;
     // Camera/Offset Vars
     LevelManager.cameraOffsetX = 0;
     LevelManager.cameraOffsetY = 0;

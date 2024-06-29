@@ -14,7 +14,6 @@ export default class Melee extends Weapon {
   damageFrames: Vect2D; // x-> start damage, y-> end damage
   parent: Player;
   damageMult: number = 1;
-  //!debug var: draws the damage Collider rect
   debugMode: boolean = false;
   constructor(
     name: string,
@@ -80,24 +79,10 @@ export default class Melee extends Weapon {
       this.parent.spriteRenderer.frameIndex < this.damageFrames.y
     ) {
       ctx.fillStyle = color;
-      // console.log(
-      //   this.parent.position.x + this.hitBoxRect.x,
-      //   this.parent.position.y + this.hitBoxRect.y,
-      //   this.hitBoxRect.width * scale,
-      //   this.hitBoxRect.height * scale
-      // );
+
       ctx.save();
       let flipped = this.parent.flipped;
-      // if (flipped) {
-      //   // console.log("flipped");
-      //   ctx.translate(
-      //     this.parent.position.x +
-      //       this.hitBoxRect.x -
-      //       LevelManager.cameraOffsetX * 2,
-      //     this.parent.position.y + this.hitBoxRect.y
-      //   );
-      //   ctx.scale(-1, 1);
-      // }
+
       SpriteRenderer.drawOffsetRect(
         ctx,
         flipped
