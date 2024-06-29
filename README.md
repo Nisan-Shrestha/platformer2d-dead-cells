@@ -1,6 +1,6 @@
 # [platformer2d-dead-cells](https://platformer2d-dead-cells.vercel.app/)
 ## Overview
-This project is a 2D platformer game built using Vite and vanilla TypeScript. It features a level editor that allows users to create and customize game levels.
+This project is a 2D platformer game built using Vite and vanilla TypeScript. It features a level editor that allows users to create and customize game levels. Try it out [Here!](https://platformer2d-dead-cells.vercel.app/)
 
 ## Features
 - **2D Platformer:** Navigate through levels, avoid obstacles, and defeat enemies.
