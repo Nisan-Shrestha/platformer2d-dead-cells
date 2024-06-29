@@ -27,7 +27,7 @@ const playerFall: IAnimInfo = {
 };
 const playerAtkSword: IAnimInfo = {
   frameCount: 13,
-  animationLength: 2000,
+  animationLength: 700,
   frameGap: 0,
 };
 const playerAtkBroadSword: IAnimInfo = {
