@@ -74,8 +74,8 @@ class Player {
     left: ["a", "arrowleft"],
     right: ["d", "arrowright"],
     jump: ["w", " "],
-    atkA: ["k", "leftM"],
-    atkB: ["l", "rightM"],
+    atkA: ["j", "leftM"],
+    atkB: ["k", "rightM"],
     interact: ["e", "enter"],
   };
 
